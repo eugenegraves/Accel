@@ -1,73 +1,31 @@
-# React + TypeScript + Vite
+# Accel
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**One place to log sprints, lifts, and meets—and see how you’re trending.**
 
-Currently, two official plugins are available:
+Accel helps you track track & field and strength work in one app. Log sessions, review by distance or exercise, and get simple insights so you can focus on training instead of spreadsheets.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## What you can do
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**Sprint sessions** — Start a session, pick a distance (from 10m up to 500m), and log each rep with time and timing type (hand or FAT). Support for fly-in distances (10, 20, 30m), optional rest timer between reps, and multiple sets keeps practice logging fast. Your favorite distances are one tap away.
 
-## Expanding the ESLint configuration
+**Lift sessions** — Log strength work by exercise and load (kg). Add sets and reps, and optionally record peak velocity when you use a velocity-based device. Choose from common exercises or add your own. Complete a session when you’re done, or reopen it later to fix or add something.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+**Meets** — Create a meet (name, indoor/outdoor, timing type), then log each race: distance, round (heat, semi, final), time, and for outdoor races, wind and place. All your races stay tied to that meet so you can review season and career context.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+**Review** — See your history at a glance. Sprint review shows each distance you’ve run with your PR, rep count, and whether you’re improving, holding, or slipping. Tap a distance to see every rep, your best, and rolling averages. Lift review does the same by exercise: max load, set count, and last session; tap an exercise for full history. Meet review shows PRs and season bests by distance, how many races you’ve run, and how recent times compare to your PR.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+**Insights** — Accel scans your data and surfaces short, plain-language notes: new PRs, stretches with no improvement, and rep-count milestones. Filter by sprints, lifts, or meets so you see what matters to you.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+**Templates** — Save a completed sprint or lift session as a template. Next time, apply that template to create a similar session in a few taps instead of re-entering everything.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+**Settings** — Set favorite distances and exercises for quick picking, default rest between sprint reps, default timing type, and theme (light, dark, or system). Optional haptic feedback and a clear-data option are there when you need them.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Who it’s for
+
+Athletes and coaches who want a single, focused place to log sprint work, lifting, and meets—and to review progress and trends without digging through technical details. Accel is built for the training session and the season, not for the tech stack.
+
+**Accel 1.0** — Sprints, lifts, meets, review, insights, templates, and preferences in one app.
