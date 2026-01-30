@@ -147,7 +147,7 @@ export function SettingsPage() {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="text-slate-400">Loading...</div>
+        <div className="text-zinc-400">Loading...</div>
       </div>
     );
   }
@@ -155,18 +155,18 @@ export function SettingsPage() {
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <header className="flex items-center px-4 py-3 border-b border-slate-800 safe-area-inset-top">
+      <header className="flex items-center px-4 py-3 border-b border-zinc-800 safe-area-inset-top">
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="p-2 -ml-2 text-slate-400 hover:text-slate-200"
+          className="p-2 -ml-2 text-zinc-400 hover:text-zinc-200"
           aria-label="Back"
         >
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="flex-1 text-center text-xl font-bold text-slate-100">
+        <h1 className="flex-1 text-center text-xl font-bold text-zinc-100">
           Settings
         </h1>
         <div className="w-10" />
@@ -176,15 +176,15 @@ export function SettingsPage() {
       <div className="flex-1 overflow-y-auto px-4 py-4 safe-area-inset-bottom">
         {/* Default Timing Type */}
         <section className="mb-6">
-          <h2 className="text-sm font-medium text-slate-400 mb-3">DEFAULT TIMING</h2>
+          <h2 className="text-sm font-medium text-zinc-400 mb-3">DEFAULT TIMING</h2>
           <div className="flex gap-2">
             <button
               onClick={() => savePreferences({ defaultTimingType: 'HAND' })}
               className={`
-                flex-1 px-4 py-3 rounded-lg font-medium transition-colors
+                flex-1 px-4 py-3 rounded-lg font-medium transition-colors duration-150 min-h-[44px]
                 ${preferences.defaultTimingType === 'HAND'
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
                 }
               `}
             >
@@ -193,10 +193,10 @@ export function SettingsPage() {
             <button
               onClick={() => savePreferences({ defaultTimingType: 'FAT' })}
               className={`
-                flex-1 px-4 py-3 rounded-lg font-medium transition-colors
+                flex-1 px-4 py-3 rounded-lg font-medium transition-colors duration-150 min-h-[44px]
                 ${preferences.defaultTimingType === 'FAT'
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
                 }
               `}
             >
@@ -207,22 +207,22 @@ export function SettingsPage() {
 
         {/* Default Rest Time */}
         <section className="mb-6">
-          <h2 className="text-sm font-medium text-slate-400 mb-3">DEFAULT REST TIME</h2>
+          <h2 className="text-sm font-medium text-zinc-400 mb-3">DEFAULT REST TIME</h2>
           <div className="flex items-center gap-4">
             <button
               onClick={() => savePreferences({ defaultRestTime: Math.max(60, preferences.defaultRestTime - 30) })}
-              className="w-12 h-12 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-xl"
+              className="w-12 h-12 rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700 text-xl min-h-[44px]"
             >
               -
             </button>
             <div className="flex-1 text-center">
-              <span className="text-2xl font-mono font-bold text-slate-100">
+              <span className="text-2xl font-mono font-bold text-zinc-100">
                 {Math.floor(preferences.defaultRestTime / 60)}:{(preferences.defaultRestTime % 60).toString().padStart(2, '0')}
               </span>
             </div>
             <button
               onClick={() => savePreferences({ defaultRestTime: Math.min(600, preferences.defaultRestTime + 30) })}
-              className="w-12 h-12 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-xl"
+              className="w-12 h-12 rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700 text-xl min-h-[44px]"
             >
               +
             </button>
@@ -231,8 +231,8 @@ export function SettingsPage() {
 
         {/* Favorite Distances */}
         <section className="mb-6">
-          <h2 className="text-sm font-medium text-slate-400 mb-3">FAVORITE DISTANCES</h2>
-          <p className="text-xs text-slate-500 mb-2">
+          <h2 className="text-sm font-medium text-zinc-400 mb-3">FAVORITE DISTANCES</h2>
+          <p className="text-xs text-zinc-500 mb-2">
             Tap to toggle. Selected distances appear first in the picker.
           </p>
           <div className="flex flex-wrap gap-2">
@@ -241,10 +241,10 @@ export function SettingsPage() {
                 key={d}
                 onClick={() => toggleFavoriteDistance(d)}
                 className={`
-                  px-3 py-1.5 rounded-full text-sm font-medium transition-colors
+                  px-3 py-1.5 rounded-full text-sm font-medium transition-colors duration-150 min-h-[36px]
                   ${preferences.favoriteDistances.includes(d)
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                    ? 'bg-red-600 text-white'
+                    : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
                   }
                 `}
               >
@@ -256,18 +256,18 @@ export function SettingsPage() {
 
         {/* Haptic Feedback */}
         <section className="mb-6">
-          <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
-            <span className="font-medium text-slate-200">Haptic Feedback</span>
+          <div className="flex items-center justify-between p-4 bg-zinc-900 rounded-lg">
+            <span className="font-medium text-zinc-200">Haptic Feedback</span>
             <button
               onClick={() => savePreferences({ hapticFeedback: !preferences.hapticFeedback })}
               className={`
-                w-12 h-7 rounded-full transition-colors
-                ${preferences.hapticFeedback ? 'bg-emerald-600' : 'bg-slate-600'}
+                w-12 h-7 rounded-full transition-colors duration-150
+                ${preferences.hapticFeedback ? 'bg-red-600' : 'bg-zinc-600'}
               `}
             >
               <div
                 className={`
-                  w-5 h-5 bg-white rounded-full transform transition-transform
+                  w-5 h-5 bg-white rounded-full transform transition-transform duration-150
                   ${preferences.hapticFeedback ? 'translate-x-6' : 'translate-x-1'}
                 `}
               />
@@ -277,7 +277,7 @@ export function SettingsPage() {
 
         {/* Data Management */}
         <section className="mb-6">
-          <h2 className="text-sm font-medium text-slate-400 mb-3">DATA MANAGEMENT</h2>
+          <h2 className="text-sm font-medium text-zinc-400 mb-3">DATA MANAGEMENT</h2>
           <div className="space-y-3">
             <Button
               variant="secondary"
@@ -306,9 +306,9 @@ export function SettingsPage() {
               <p className="text-xs text-red-400 text-center">{importError}</p>
             )}
             {importSuccess && (
-              <p className="text-xs text-emerald-400 text-center">{importSuccess}</p>
+              <p className="text-xs text-green-400 text-center">{importSuccess}</p>
             )}
-            <p className="text-xs text-slate-500 text-center">
+            <p className="text-xs text-zinc-500 text-center">
               Export your data before clearing or for backup. Import replaces all existing data.
             </p>
           </div>
@@ -324,13 +324,13 @@ export function SettingsPage() {
           >
             Clear All Data
           </Button>
-          <p className="text-xs text-slate-500 mt-2 text-center">
+          <p className="text-xs text-zinc-500 mt-2 text-center">
             This will permanently delete all sessions, reps, and meets.
           </p>
         </section>
 
         {/* Version */}
-        <div className="text-center text-slate-600 text-sm py-4">
+        <div className="text-center text-zinc-600 text-sm py-4">
           Accel v{APP_VERSION}
         </div>
       </div>

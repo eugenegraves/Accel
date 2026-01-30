@@ -13,16 +13,16 @@ export function RollingAverageDisplay({
 }: RollingAverageDisplayProps) {
   if (averages.length === 0) {
     return (
-      <div className="text-sm text-slate-500">
+      <div className="text-sm text-zinc-500">
         Not enough data for rolling averages
       </div>
     );
   }
 
   const getChangeColor = (change: number) => {
-    if (Math.abs(change) < 0.5) return 'text-slate-400';
+    if (Math.abs(change) < 0.5) return 'text-zinc-400';
     const isImproving = invertTrend ? change < 0 : change > 0;
-    return isImproving ? 'text-emerald-400' : 'text-red-400';
+    return isImproving ? 'text-green-400' : 'text-red-400';
   };
 
   const formatChange = (avg: RollingAverage) => {
@@ -37,9 +37,9 @@ export function RollingAverageDisplay({
           key={avg.period}
           className="flex items-center justify-between text-sm"
         >
-          <span className="text-slate-400">{avg.period}d avg</span>
+          <span className="text-zinc-400">{avg.period}d avg</span>
           <div className="flex items-center gap-2">
-            <span className="text-slate-100 font-medium">
+            <span className="text-zinc-100 font-medium">
               {avg.value.toFixed(2)}{unit}
             </span>
             <span className={`text-xs ${getChangeColor(avg.change)}`}>

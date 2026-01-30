@@ -41,11 +41,11 @@ export function StatCard({
   const classes = sizeClasses[size];
 
   // Determine delta color
-  let deltaColor = 'text-slate-400';
+  let deltaColor = 'text-zinc-400';
   if (delta !== undefined && delta !== 0) {
     const isPositive = delta > 0;
     const isImprovement = invertDelta ? !isPositive : isPositive;
-    deltaColor = isImprovement ? 'text-emerald-400' : 'text-red-400';
+    deltaColor = isImprovement ? 'text-green-400' : 'text-red-400';
   }
 
   const formatDelta = (d: number) => {
@@ -54,14 +54,14 @@ export function StatCard({
   };
 
   return (
-    <div className={`bg-slate-800 rounded-lg ${classes.container}`}>
-      <div className={`${classes.label} text-slate-400 mb-1`}>{label}</div>
+    <div className={`bg-zinc-900 rounded-lg ${classes.container}`}>
+      <div className={`${classes.label} text-zinc-400 mb-1`}>{label}</div>
       <div className="flex items-baseline gap-1">
-        <span className={`${classes.value} font-semibold text-slate-100`}>
+        <span className={`${classes.value} font-semibold text-zinc-100`}>
           {typeof value === 'number' ? value.toFixed(2) : value}
         </span>
         {unit && (
-          <span className={`${classes.label} text-slate-400`}>{unit}</span>
+          <span className={`${classes.label} text-zinc-400`}>{unit}</span>
         )}
       </div>
       {delta !== undefined && (

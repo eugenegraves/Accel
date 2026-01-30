@@ -37,11 +37,11 @@ export function ApplyTemplateModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Apply Template">
       <div className="space-y-4">
-        <p className="text-slate-300">
+        <p className="text-zinc-300">
           Create a new {type} session using the <strong>{templateName}</strong> template?
         </p>
 
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-zinc-400">
           This will create a new session with the same structure as the template.
         </p>
 

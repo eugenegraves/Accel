@@ -50,13 +50,13 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h2 id="modal-title" className="text-xl font-semibold text-slate-100">
+          <h2 id="modal-title" className="text-xl font-semibold text-zinc-100">
             {title}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 text-slate-400 hover:text-slate-200 transition-colors"
+            className="p-1 text-zinc-400 hover:text-zinc-200 transition-colors duration-150"
             aria-label="Close modal"
           >
             <svg

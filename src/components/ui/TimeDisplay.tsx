@@ -18,9 +18,9 @@ export function TimeDisplay({ value, placeholder = '0.00', size = 'lg' }: TimeDi
   return (
     <div
       className={`
-        font-mono font-bold text-center py-4 px-6 bg-slate-800 rounded-xl
+        font-mono font-bold text-center py-4 px-6 bg-zinc-900 rounded-xl
         ${sizeClasses[size]}
-        ${value ? 'text-slate-100' : 'text-slate-600'}
+        ${value ? 'text-zinc-100' : 'text-zinc-600'}
       `}
     >
       {value ? (
@@ -45,12 +45,12 @@ export function VelocityDisplay({ value, placeholder = '0.00' }: VelocityDisplay
   return (
     <div
       className={`
-        font-mono font-bold text-center py-4 px-6 bg-slate-800 rounded-xl text-4xl
-        ${value ? 'text-slate-100' : 'text-slate-600'}
+        font-mono font-bold text-center py-4 px-6 bg-zinc-900 rounded-xl text-4xl
+        ${value ? 'text-zinc-100' : 'text-zinc-600'}
       `}
     >
       {isValid ? parsedValue.toFixed(2) : placeholder}
-      <span className="text-lg text-slate-500 ml-2">m/s</span>
+      <span className="text-lg text-zinc-500 ml-2">m/s</span>
     </div>
   );
 }

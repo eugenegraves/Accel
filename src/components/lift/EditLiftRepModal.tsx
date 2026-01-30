@@ -85,11 +85,11 @@ export function EditLiftRepModal({ isOpen, rep, onClose, onSave, onDelete }: Edi
         {/* Velocity input */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm text-slate-400">Velocity (m/s)</label>
+            <label className="text-sm text-zinc-400">Velocity (m/s)</label>
             <button
               type="button"
               onClick={handleClear}
-              className="text-xs text-slate-500 hover:text-slate-300 px-2 py-1 rounded bg-slate-800"
+              className="text-xs text-zinc-500 hover:text-zinc-300 px-2 py-1 rounded bg-zinc-800"
             >
               Clear (no velocity)
             </button>
@@ -103,7 +103,7 @@ export function EditLiftRepModal({ isOpen, rep, onClose, onSave, onDelete }: Edi
             />
           </div>
           {!velocityInput && (
-            <p className="mt-2 text-xs text-slate-500">
+            <p className="mt-2 text-xs text-zinc-500">
               Leave empty if velocity was not measured
             </p>
           )}
@@ -111,7 +111,7 @@ export function EditLiftRepModal({ isOpen, rep, onClose, onSave, onDelete }: Edi
 
         {/* Notes */}
         <div>
-          <label htmlFor="notes" className="block text-sm text-slate-400 mb-1">
+          <label htmlFor="notes" className="block text-sm text-zinc-400 mb-1">
             Notes (optional)
           </label>
           <textarea
@@ -120,7 +120,7 @@ export function EditLiftRepModal({ isOpen, rep, onClose, onSave, onDelete }: Edi
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Any notes about this rep..."
             rows={2}
-            className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 resize-none"
+            className="w-full px-4 py-3 bg-zinc-800 border border-zinc-600 rounded-lg text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-red-500 resize-none"
           />
         </div>
 

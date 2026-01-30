@@ -13,20 +13,20 @@ interface LiftSetCardProps {
 
 export function LiftSetCard({ set, reps, onEditSet, onEditRep, onDeleteRep, onDeleteSet, showActions = true }: LiftSetCardProps) {
   return (
-    <div className="bg-slate-800 rounded-lg overflow-hidden">
+    <div className="bg-zinc-800 rounded-lg overflow-hidden">
       {/* Set header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-slate-700/50">
+      <div className="flex items-center justify-between px-4 py-3 bg-zinc-700/50">
         <div>
-          <h3 className="font-medium text-slate-100">{set.exercise}</h3>
-          <p className="text-sm text-slate-400">{set.load} kg</p>
+          <h3 className="font-medium text-zinc-100">{set.exercise}</h3>
+          <p className="text-sm text-zinc-400">{set.load} kg</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-slate-500">Set {set.sequence}</span>
+          <span className="text-sm text-zinc-500">Set {set.sequence}</span>
           {showActions && onEditSet && (
             <button
               type="button"
               onClick={() => onEditSet(set)}
-              className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-600 rounded transition-colors"
+              className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-600 rounded transition-colors"
               aria-label="Edit set"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -42,7 +42,7 @@ export function LiftSetCard({ set, reps, onEditSet, onEditRep, onDeleteRep, onDe
                   onDeleteSet(set.id);
                 }
               }}
-              className="p-1 text-slate-500 hover:text-red-400 transition-colors"
+              className="p-1 text-zinc-500 hover:text-red-400 transition-colors"
               aria-label="Delete set"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -68,7 +68,7 @@ export function LiftSetCard({ set, reps, onEditSet, onEditRep, onDeleteRep, onDe
             ))}
           </div>
         ) : (
-          <p className="text-center text-slate-600 py-2 text-sm">
+          <p className="text-center text-zinc-600 py-2 text-sm">
             No reps yet
           </p>
         )}

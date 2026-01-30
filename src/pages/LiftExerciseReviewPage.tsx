@@ -12,7 +12,7 @@ export function LiftExerciseReviewPage() {
   if (!exercise) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="text-slate-400">No exercise specified</div>
+        <div className="text-zinc-400">No exercise specified</div>
       </div>
     );
   }
@@ -20,18 +20,18 @@ export function LiftExerciseReviewPage() {
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <header className="bg-slate-800 border-b border-slate-700 px-4 py-3 pt-safe-top">
+      <header className="bg-zinc-800 border-b border-zinc-700 px-4 py-3 pt-safe-top">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/review/lifts')}
-            className="p-1 text-slate-400 hover:text-slate-200"
+            className="p-1 text-zinc-400 hover:text-zinc-200"
             aria-label="Back"
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className="text-xl font-semibold text-slate-100">{exercise}</h1>
+          <h1 className="text-xl font-semibold text-zinc-100">{exercise}</h1>
         </div>
       </header>
 
@@ -39,7 +39,7 @@ export function LiftExerciseReviewPage() {
       <main className="flex-1 overflow-auto p-4 pb-safe-bottom">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="text-slate-400">Loading...</div>
+            <div className="text-zinc-400">Loading...</div>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -48,7 +48,7 @@ export function LiftExerciseReviewPage() {
           </div>
         ) : !trend ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="text-slate-400 mb-4">No data for {exercise}</div>
+            <div className="text-zinc-400 mb-4">No data for {exercise}</div>
             <Button onClick={() => navigate('/review/lifts')}>Go Back</Button>
           </div>
         ) : (
@@ -69,20 +69,20 @@ export function LiftExerciseReviewPage() {
             </div>
 
             {/* Max Load Info */}
-            <div className="bg-slate-800 rounded-lg p-4">
-              <div className="text-sm text-slate-400 mb-1">Max load achieved</div>
-              <div className="text-lg text-slate-100 font-semibold">
+            <div className="bg-zinc-800 rounded-lg p-4">
+              <div className="text-sm text-zinc-400 mb-1">Max load achieved</div>
+              <div className="text-lg text-zinc-100 font-semibold">
                 {trend.maxLoad}kg
               </div>
-              <div className="text-sm text-slate-500">
+              <div className="text-sm text-zinc-500">
                 on {trend.maxLoadDate}
               </div>
             </div>
 
             {/* Peak Velocities Chart */}
             {trend.peakVelocities.length >= 2 && (
-              <div className="bg-slate-800 rounded-lg p-4">
-                <div className="text-sm text-slate-400 mb-3">Peak Velocity Trend</div>
+              <div className="bg-zinc-800 rounded-lg p-4">
+                <div className="text-sm text-zinc-400 mb-3">Peak Velocity Trend</div>
                 <div className="flex items-center gap-4">
                   <TrendSparkline
                     data={trend.peakVelocities}
@@ -97,14 +97,14 @@ export function LiftExerciseReviewPage() {
 
             {/* Velocity by Load */}
             {trend.velocityByLoad.length > 0 && (
-              <div className="bg-slate-800 rounded-lg p-4">
-                <div className="text-sm text-slate-400 mb-3">Velocity by Load</div>
+              <div className="bg-zinc-800 rounded-lg p-4">
+                <div className="text-sm text-zinc-400 mb-3">Velocity by Load</div>
                 <div className="space-y-3">
                   {trend.velocityByLoad.slice(-5).map(({ load, dataPoints }) => {
                     const latestVelocity = dataPoints[dataPoints.length - 1]?.value;
                     return (
                       <div key={load} className="flex items-center justify-between">
-                        <span className="text-slate-300">{load}kg</span>
+                        <span className="text-zinc-300">{load}kg</span>
                         <div className="flex items-center gap-3">
                           {dataPoints.length >= 2 && (
                             <TrendSparkline

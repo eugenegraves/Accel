@@ -25,7 +25,7 @@ function App() {
       <ActiveSprintProvider>
         <ActiveLiftProvider>
           <ActiveMeetProvider>
-            <div className="min-h-screen min-h-dvh flex flex-col bg-slate-900">
+            <div className="min-h-screen min-h-dvh flex flex-col bg-[#121212]">
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/sprint/:sessionId" element={<SprintPage />} />

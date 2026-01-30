@@ -92,7 +92,7 @@ export function EditSprintRepModal({ isOpen, rep, onClose, onSave, onDelete }: E
       <div className="space-y-4">
         {/* Distance picker */}
         <div>
-          <label className="block text-sm text-slate-400 mb-2">Distance</label>
+          <label className="block text-sm text-zinc-400 mb-2">Distance</label>
           <DistancePicker
             value={distance}
             onChange={setDistance}
@@ -102,7 +102,7 @@ export function EditSprintRepModal({ isOpen, rep, onClose, onSave, onDelete }: E
 
         {/* Time input */}
         <div>
-          <label className="block text-sm text-slate-400 mb-2">Time (seconds)</label>
+          <label className="block text-sm text-zinc-400 mb-2">Time (seconds)</label>
           <TimeDisplay value={timeInput} />
           <div className="mt-2">
             <NumPad
@@ -114,7 +114,7 @@ export function EditSprintRepModal({ isOpen, rep, onClose, onSave, onDelete }: E
 
         {/* Timing type */}
         <div>
-          <label className="block text-sm text-slate-400 mb-2">Timing Type</label>
+          <label className="block text-sm text-zinc-400 mb-2">Timing Type</label>
           <TimingTypePicker
             value={timingType}
             onChange={setTimingType}
@@ -124,7 +124,7 @@ export function EditSprintRepModal({ isOpen, rep, onClose, onSave, onDelete }: E
 
         {/* Rest time */}
         <div>
-          <label htmlFor="rest" className="block text-sm text-slate-400 mb-1">
+          <label htmlFor="rest" className="block text-sm text-zinc-400 mb-1">
             Rest After (mm:ss or seconds)
           </label>
           <input
@@ -133,7 +133,7 @@ export function EditSprintRepModal({ isOpen, rep, onClose, onSave, onDelete }: E
             value={restInput}
             onChange={(e) => setRestInput(e.target.value)}
             placeholder="3:00"
-            className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+            className="w-full px-4 py-3 bg-zinc-800 border border-zinc-600 rounded-lg text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-red-500"
           />
         </div>
 
@@ -144,15 +144,15 @@ export function EditSprintRepModal({ isOpen, rep, onClose, onSave, onDelete }: E
               type="checkbox"
               checked={isFly}
               onChange={(e) => setIsFly(e.target.checked)}
-              className="w-5 h-5 rounded border-slate-600 bg-slate-800 text-emerald-500 focus:ring-emerald-500"
+              className="w-5 h-5 rounded border-zinc-600 bg-zinc-800 text-red-500 focus:ring-red-500"
             />
-            <span className="text-slate-300">Fly Rep</span>
+            <span className="text-zinc-300">Fly Rep</span>
           </label>
           {isFly && (
             <select
               value={flyInDistance}
               onChange={(e) => setFlyInDistance(Number(e.target.value) as FlyInDistance)}
-              className="px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200"
+              className="px-3 py-2 bg-zinc-800 border border-zinc-600 rounded-lg text-zinc-200"
             >
               {FLY_IN_DISTANCES.map((d) => (
                 <option key={d} value={d}>{d}m fly-in</option>
@@ -163,7 +163,7 @@ export function EditSprintRepModal({ isOpen, rep, onClose, onSave, onDelete }: E
 
         {/* Notes */}
         <div>
-          <label htmlFor="notes" className="block text-sm text-slate-400 mb-1">
+          <label htmlFor="notes" className="block text-sm text-zinc-400 mb-1">
             Notes (optional)
           </label>
           <textarea
@@ -172,7 +172,7 @@ export function EditSprintRepModal({ isOpen, rep, onClose, onSave, onDelete }: E
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Any notes about this rep..."
             rows={2}
-            className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 resize-none"
+            className="w-full px-4 py-3 bg-zinc-800 border border-zinc-600 rounded-lg text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-red-500 resize-none"
           />
         </div>
 

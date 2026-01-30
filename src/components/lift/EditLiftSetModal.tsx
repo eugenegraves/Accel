@@ -79,7 +79,7 @@ export function EditLiftSetModal({ isOpen, set, recentExercises, onClose, onSave
       <div className="space-y-4">
         {/* Exercise picker */}
         <div>
-          <label className="block text-sm text-slate-400 mb-2">Exercise</label>
+          <label className="block text-sm text-zinc-400 mb-2">Exercise</label>
           <ExercisePicker
             value={exercise}
             onChange={setExercise}
@@ -90,14 +90,14 @@ export function EditLiftSetModal({ isOpen, set, recentExercises, onClose, onSave
 
         {/* Load input */}
         <div>
-          <label htmlFor="load" className="block text-sm text-slate-400 mb-1">
+          <label htmlFor="load" className="block text-sm text-zinc-400 mb-1">
             Load (kg)
           </label>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setLoad(Math.max(0, load - 5))}
-              className="w-10 h-10 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-xl"
+              className="w-10 h-10 rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700 text-xl min-h-[44px]"
             >
               -
             </button>
@@ -106,22 +106,22 @@ export function EditLiftSetModal({ isOpen, set, recentExercises, onClose, onSave
               type="number"
               value={load}
               onChange={(e) => setLoad(Math.max(0, parseInt(e.target.value) || 0))}
-              className="w-24 text-center px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-100 text-lg font-mono"
+              className="w-24 text-center px-3 py-2 bg-zinc-800 border border-zinc-600 rounded-lg text-zinc-100 text-lg font-mono"
             />
             <button
               type="button"
               onClick={() => setLoad(load + 5)}
-              className="w-10 h-10 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-xl"
+              className="w-10 h-10 rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700 text-xl min-h-[44px]"
             >
               +
             </button>
-            <span className="text-slate-400">kg</span>
+            <span className="text-zinc-400">kg</span>
           </div>
         </div>
 
         {/* Notes */}
         <div>
-          <label htmlFor="notes" className="block text-sm text-slate-400 mb-1">
+          <label htmlFor="notes" className="block text-sm text-zinc-400 mb-1">
             Notes (optional)
           </label>
           <textarea
@@ -130,7 +130,7 @@ export function EditLiftSetModal({ isOpen, set, recentExercises, onClose, onSave
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Any notes about this set..."
             rows={2}
-            className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 resize-none"
+            className="w-full px-4 py-3 bg-zinc-800 border border-zinc-600 rounded-lg text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-red-500 resize-none"
           />
         </div>
 

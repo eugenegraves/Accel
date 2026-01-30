@@ -19,20 +19,20 @@ export function DistanceSummaryCard({ summary, sparklineData }: DistanceSummaryC
   };
 
   const trendColor = {
-    improving: 'text-emerald-400',
+    improving: 'text-green-400',
     declining: 'text-red-400',
-    stable: 'text-slate-400',
+    stable: 'text-zinc-400',
   };
 
   return (
     <button
       onClick={() => navigate(`/distance/${summary.distance}`)}
-      className="w-full bg-slate-800 rounded-lg p-4 text-left hover:bg-slate-750 transition-colors active:bg-slate-700"
+      className="w-full bg-zinc-900 rounded-lg p-4 text-left hover:bg-zinc-800 transition-colors duration-150 active:bg-zinc-700"
     >
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <span className="text-lg font-semibold text-slate-100">
+            <span className="text-lg font-semibold text-zinc-100">
               {summary.distance}m
             </span>
             <span className={`text-sm ${trendColor[summary.trendDirection]}`}>
@@ -40,14 +40,14 @@ export function DistanceSummaryCard({ summary, sparklineData }: DistanceSummaryC
             </span>
           </div>
           <div className="flex items-center gap-3 mt-1">
-            <span className="text-sm text-emerald-400">
+            <span className="text-sm text-green-400">
               PR: {formatTime(summary.bestTime)}
             </span>
-            <span className="text-sm text-slate-400">
+            <span className="text-sm text-zinc-400">
               {summary.repCount} reps
             </span>
           </div>
-          <div className="text-xs text-slate-500 mt-1">
+          <div className="text-xs text-zinc-500 mt-1">
             Last: {summary.lastSessionDate}
           </div>
         </div>
@@ -57,7 +57,7 @@ export function DistanceSummaryCard({ summary, sparklineData }: DistanceSummaryC
             data={sparklineData}
             width={80}
             height={32}
-            color="#10b981"
+            color="#22c55e"
             showTrendArrow={false}
             invertTrend={true}
           />

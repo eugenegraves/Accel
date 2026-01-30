@@ -20,10 +20,10 @@ export function TimingTypePicker({ value, onChange, disabled = false, locked = f
           disabled={isDisabled}
           onClick={() => onChange('HAND')}
           className={`
-            flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors
+            flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-150 min-h-[44px]
             ${value === 'HAND'
-              ? 'bg-emerald-600 text-white'
-              : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+              ? 'bg-red-600 text-white'
+              : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
             }
             ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
           `}
@@ -37,10 +37,10 @@ export function TimingTypePicker({ value, onChange, disabled = false, locked = f
           disabled={isDisabled}
           onClick={() => onChange('FAT')}
           className={`
-            flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors
+            flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-150 min-h-[44px]
             ${value === 'FAT'
-              ? 'bg-emerald-600 text-white'
-              : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+              ? 'bg-red-600 text-white'
+              : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
             }
             ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
           `}
@@ -49,7 +49,7 @@ export function TimingTypePicker({ value, onChange, disabled = false, locked = f
         </button>
       </div>
       {locked && (
-        <p className="text-xs text-slate-500 text-center">
+        <p className="text-xs text-zinc-500 text-center">
           Timing type locked after first rep
         </p>
       )}

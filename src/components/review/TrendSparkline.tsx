@@ -13,14 +13,14 @@ export function TrendSparkline({
   data,
   width = 80,
   height = 24,
-  color = '#10b981', // emerald-500
+  color = '#22c55e', // green-500
   showTrendArrow = true,
   invertTrend = false,
 }: TrendSparklineProps) {
   if (data.length < 2) {
     return (
       <div
-        className="flex items-center justify-center text-slate-500 text-xs"
+        className="flex items-center justify-center text-zinc-500 text-xs"
         style={{ width, height }}
       >
         --
@@ -62,7 +62,7 @@ export function TrendSparkline({
     ? trendDirection === 'down'
     : trendDirection === 'up';
 
-  const trendColor = isImproving ? '#10b981' : trendDirection === 'stable' ? '#64748b' : '#ef4444';
+  const trendColor = isImproving ? '#22c55e' : trendDirection === 'stable' ? '#71717a' : '#ef4444';
 
   return (
     <div className="flex items-center gap-1">

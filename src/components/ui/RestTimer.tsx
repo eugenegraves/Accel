@@ -80,10 +80,10 @@ export function RestTimer({ initialSeconds, isRunning, onComplete, onReset }: Re
       </div>
 
       {/* Progress bar */}
-      <div className="w-full h-1 bg-slate-700 rounded-full overflow-hidden">
+      <div className="w-full h-1 bg-zinc-700 rounded-full overflow-hidden">
         <div
           className={`h-full transition-all duration-1000 ease-linear ${
-            secondsRemaining === 0 ? 'bg-emerald-500' : secondsRemaining <= 30 ? 'bg-yellow-500' : 'bg-slate-500'
+            secondsRemaining === 0 ? 'bg-green-500' : secondsRemaining <= 30 ? 'bg-yellow-500' : 'bg-zinc-500'
           }`}
           style={{ width: `${progress}%` }}
         />
@@ -94,7 +94,7 @@ export function RestTimer({ initialSeconds, isRunning, onComplete, onReset }: Re
         <button
           type="button"
           onClick={handleReset}
-          className="text-sm text-slate-400 hover:text-slate-200 transition-colors"
+          className="text-sm text-zinc-400 hover:text-zinc-200 transition-colors duration-150"
         >
           Reset
         </button>
@@ -110,7 +110,7 @@ interface RestTimerDisplayProps {
 
 export function RestTimerDisplay({ seconds }: RestTimerDisplayProps) {
   return (
-    <span className="text-slate-500 text-sm">
+    <span className="text-zinc-500 text-sm">
       ({formatRestTime(seconds)})
     </span>
   );

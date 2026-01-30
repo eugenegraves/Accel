@@ -22,7 +22,7 @@ export function LiftTemplateDetailPage() {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="text-slate-400">Loading...</div>
+        <div className="text-zinc-400">Loading...</div>
       </div>
     );
   }
@@ -30,7 +30,7 @@ export function LiftTemplateDetailPage() {
   if (!template) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="text-slate-400 mb-4">Template not found</div>
+        <div className="text-zinc-400 mb-4">Template not found</div>
         <Button onClick={() => navigate('/templates')}>Go Back</Button>
       </div>
     );
@@ -42,11 +42,11 @@ export function LiftTemplateDetailPage() {
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <header className="bg-slate-800 border-b border-slate-700 px-4 py-3 pt-safe-top">
+      <header className="bg-zinc-900 border-b border-zinc-800 px-4 py-3 pt-safe-top">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/templates')}
-            className="p-1 text-slate-400 hover:text-slate-200"
+            className="p-1 text-zinc-400 hover:text-zinc-200"
             aria-label="Back"
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -54,7 +54,7 @@ export function LiftTemplateDetailPage() {
             </svg>
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-slate-100">
+            <h1 className="text-xl font-semibold text-zinc-100">
               {template.template.name}
             </h1>
             <span className="text-xs text-blue-400">Lift Template</span>
@@ -66,48 +66,48 @@ export function LiftTemplateDetailPage() {
       <main className="flex-1 overflow-auto p-4 pb-safe-bottom">
         {/* Description */}
         {template.template.description && (
-          <div className="bg-slate-800 rounded-lg p-4 mb-4">
-            <p className="text-slate-300">{template.template.description}</p>
+          <div className="bg-zinc-900 rounded-lg p-4 mb-4">
+            <p className="text-zinc-300">{template.template.description}</p>
           </div>
         )}
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="bg-slate-800 rounded-lg p-3 text-center">
-            <div className="text-2xl font-semibold text-slate-100">
+          <div className="bg-zinc-900 rounded-lg p-3 text-center">
+            <div className="text-2xl font-semibold text-zinc-100">
               {template.sets.length}
             </div>
-            <div className="text-xs text-slate-400">Sets</div>
+            <div className="text-xs text-zinc-400">Sets</div>
           </div>
-          <div className="bg-slate-800 rounded-lg p-3 text-center">
-            <div className="text-2xl font-semibold text-slate-100">
+          <div className="bg-zinc-900 rounded-lg p-3 text-center">
+            <div className="text-2xl font-semibold text-zinc-100">
               {exercises.length}
             </div>
-            <div className="text-xs text-slate-400">Exercises</div>
+            <div className="text-xs text-zinc-400">Exercises</div>
           </div>
-          <div className="bg-slate-800 rounded-lg p-3 text-center">
-            <div className="text-2xl font-semibold text-slate-100">
+          <div className="bg-zinc-900 rounded-lg p-3 text-center">
+            <div className="text-2xl font-semibold text-zinc-100">
               {template.template.useCount}
             </div>
-            <div className="text-xs text-slate-400">Uses</div>
+            <div className="text-xs text-zinc-400">Uses</div>
           </div>
         </div>
 
         {/* Structure */}
-        <h2 className="text-lg font-semibold text-slate-100 mb-3">Structure</h2>
+        <h2 className="text-lg font-semibold text-zinc-100 mb-3">Structure</h2>
         <div className="space-y-2 mb-6">
           {template.sets.map(set => (
             <div
               key={set.id}
-              className="bg-slate-800 rounded-lg p-4 flex items-center justify-between"
+              className="bg-zinc-900 rounded-lg p-4 flex items-center justify-between"
             >
               <div>
-                <div className="font-medium text-slate-100">{set.exercise}</div>
-                <div className="text-sm text-slate-400">
+                <div className="font-medium text-zinc-100">{set.exercise}</div>
+                <div className="text-sm text-zinc-400">
                   {set.repCount} rep{set.repCount !== 1 ? 's' : ''} @ {set.load}kg
                 </div>
               </div>
-              <div className="text-slate-500">Set {set.sequence}</div>
+              <div className="text-zinc-500">Set {set.sequence}</div>
             </div>
           ))}
         </div>

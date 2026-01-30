@@ -6,8 +6,8 @@ interface InsightFilterProps {
 }
 
 const domains: Array<{ value: InsightDomain | 'all'; label: string; color: string }> = [
-  { value: 'all', label: 'All', color: 'bg-slate-600' },
-  { value: 'sprint', label: 'Sprint', color: 'bg-emerald-600' },
+  { value: 'all', label: 'All', color: 'bg-zinc-600' },
+  { value: 'sprint', label: 'Sprint', color: 'bg-red-600' },
   { value: 'lift', label: 'Lift', color: 'bg-blue-600' },
   { value: 'meet', label: 'Meet', color: 'bg-purple-600' },
 ];
@@ -19,10 +19,10 @@ export function InsightFilter({ selectedDomain, onDomainChange }: InsightFilterP
         <button
           key={domain.value}
           onClick={() => onDomainChange(domain.value)}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-150 whitespace-nowrap min-h-[44px] flex items-center ${
             selectedDomain === domain.value
               ? `${domain.color} text-white`
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
           }`}
         >
           {domain.label}

@@ -21,17 +21,17 @@ export function SprintRepCard({ rep, isBest, onEdit, onDelete, showActions = tru
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-slate-500 text-sm w-6">{rep.sequence}.</span>
+          <span className="text-zinc-500 text-sm w-6">{rep.sequence}.</span>
           <span className="font-medium">
-            {rep.isFly && <span className="text-emerald-400 text-sm mr-1">FLY{rep.flyInDistance}</span>}
+            {rep.isFly && <span className="text-green-400 text-sm mr-1">FLY{rep.flyInDistance}</span>}
             {rep.distance}m
           </span>
           <span className="text-xl font-mono font-semibold">{formatTime(rep.time)}s</span>
-          {isBest && <span className="text-emerald-400">★</span>}
+          {isBest && <span className="text-green-400">★</span>}
         </div>
 
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-slate-500">{rep.timingType}</span>
+          <span className="text-zinc-500">{rep.timingType}</span>
           <RestTimerDisplay seconds={rep.restAfter} />
           {/* Edit button always visible */}
           {showActions && onEdit && (
@@ -41,7 +41,7 @@ export function SprintRepCard({ rep, isBest, onEdit, onDelete, showActions = tru
                 e.stopPropagation();
                 onEdit(rep);
               }}
-              className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-700 rounded transition-colors"
+              className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700 rounded transition-colors duration-150"
               aria-label="Edit rep"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -53,12 +53,12 @@ export function SprintRepCard({ rep, isBest, onEdit, onDelete, showActions = tru
       </div>
 
       {rep.notes && (
-        <p className="mt-2 text-sm text-slate-400">{rep.notes}</p>
+        <p className="mt-2 text-sm text-zinc-400">{rep.notes}</p>
       )}
 
       {/* Action menu (on tap) */}
       {showMenu && showActions && (
-        <div className="mt-3 pt-3 border-t border-slate-700 flex gap-2">
+        <div className="mt-3 pt-3 border-t border-zinc-700 flex gap-2">
           {onEdit && (
             <button
               type="button"
@@ -67,7 +67,7 @@ export function SprintRepCard({ rep, isBest, onEdit, onDelete, showActions = tru
                 onEdit(rep);
                 setShowMenu(false);
               }}
-              className="flex-1 py-2 text-sm text-slate-300 bg-slate-700 rounded-lg hover:bg-slate-600"
+              className="flex-1 py-2 text-sm text-zinc-300 bg-zinc-700 rounded-lg hover:bg-zinc-600"
             >
               Edit
             </button>
@@ -82,7 +82,7 @@ export function SprintRepCard({ rep, isBest, onEdit, onDelete, showActions = tru
                 }
                 setShowMenu(false);
               }}
-              className="flex-1 py-2 text-sm text-red-400 bg-slate-700 rounded-lg hover:bg-slate-600"
+              className="flex-1 py-2 text-sm text-red-400 bg-zinc-700 rounded-lg hover:bg-zinc-600"
             >
               Delete
             </button>

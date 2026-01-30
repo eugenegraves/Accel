@@ -70,18 +70,18 @@ export function DistancePage() {
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <header className="flex items-center px-4 py-3 border-b border-slate-800 safe-area-inset-top">
+      <header className="flex items-center px-4 py-3 border-b border-zinc-800 safe-area-inset-top">
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="p-2 -ml-2 text-slate-400 hover:text-slate-200"
+          className="p-2 -ml-2 text-zinc-400 hover:text-zinc-200"
           aria-label="Back"
         >
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="flex-1 text-center text-xl font-bold text-slate-100">
+        <h1 className="flex-1 text-center text-xl font-bold text-zinc-100">
           {distance}m
         </h1>
         <div className="w-10" /> {/* Spacer for centering */}
@@ -90,19 +90,19 @@ export function DistancePage() {
       {/* Main content */}
       <div className="flex-1 overflow-y-auto px-4 py-4 safe-area-inset-bottom">
         {loading ? (
-          <div className="text-center text-slate-400 py-8">Loading...</div>
+          <div className="text-center text-zinc-400 py-8">Loading...</div>
         ) : (
           <>
             {/* Best rep */}
             {bestRep && (
-              <div className="mb-6 p-4 bg-emerald-900/20 border border-emerald-600 rounded-xl">
+              <div className="mb-6 p-4 bg-green-900/20 border border-green-600 rounded-xl">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm text-emerald-400 mb-1">BEST</p>
-                    <p className="text-4xl font-mono font-bold text-slate-100">
+                    <p className="text-sm text-green-400 mb-1">BEST</p>
+                    <p className="text-4xl font-mono font-bold text-zinc-100">
                       {formatTime(bestRep.rep.time)}s
                     </p>
-                    <p className="text-sm text-slate-400 mt-1">
+                    <p className="text-sm text-zinc-400 mt-1">
                       {bestRep.rep.timingType}
                       {bestRep.session && ` · ${formatDateShort(bestRep.session.date)}`}
                       {bestRep.session?.title && ` · ${bestRep.session.title}`}
@@ -113,7 +113,7 @@ export function DistancePage() {
                       data={trend.recentTimes}
                       width={100}
                       height={40}
-                      color="#10b981"
+                      color="#22c55e"
                       invertTrend={true}
                     />
                   )}
@@ -123,8 +123,8 @@ export function DistancePage() {
 
             {/* Rolling Averages */}
             {trend && trend.rollingAverages.length > 0 && (
-              <div className="mb-6 p-4 bg-slate-800 rounded-xl">
-                <h3 className="text-sm font-medium text-slate-400 mb-3">ROLLING AVERAGES</h3>
+              <div className="mb-6 p-4 bg-zinc-900 rounded-xl">
+                <h3 className="text-sm font-medium text-zinc-400 mb-3">ROLLING AVERAGES</h3>
                 <RollingAverageDisplay
                   averages={trend.rollingAverages}
                   unit="s"
@@ -134,7 +134,7 @@ export function DistancePage() {
             )}
 
             {/* Recent reps */}
-            <h2 className="text-sm font-medium text-slate-400 mb-3">ALL REPS</h2>
+            <h2 className="text-sm font-medium text-zinc-400 mb-3">ALL REPS</h2>
             {reps.length > 0 ? (
               <div className="space-y-2">
                 {reps.map(({ rep, session }, idx) => (
@@ -142,19 +142,19 @@ export function DistancePage() {
                     key={rep.id}
                     className={`
                       p-3 rounded-lg border
-                      ${idx === 0 ? 'bg-emerald-900/20 border-emerald-600' : 'bg-slate-800 border-slate-700'}
+                      ${idx === 0 ? 'bg-green-900/20 border-green-600' : 'bg-zinc-900 border-zinc-800'}
                     `}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="text-xl font-mono font-semibold text-slate-100">
+                        <span className="text-xl font-mono font-semibold text-zinc-100">
                           {formatTime(rep.time)}s
                         </span>
-                        {idx === 0 && <span className="text-emerald-400">★</span>}
+                        {idx === 0 && <span className="text-green-400">★</span>}
                       </div>
-                      <span className="text-sm text-slate-500">{rep.timingType}</span>
+                      <span className="text-sm text-zinc-500">{rep.timingType}</span>
                     </div>
-                    <div className="text-sm text-slate-500 mt-1">
+                    <div className="text-sm text-zinc-500 mt-1">
                       {session && (
                         <>
                           {formatDateShort(session.date)}
@@ -166,7 +166,7 @@ export function DistancePage() {
                 ))}
               </div>
             ) : (
-              <p className="text-center text-slate-600 py-8">No reps at this distance</p>
+              <p className="text-center text-zinc-600 py-8">No reps at this distance</p>
             )}
           </>
         )}

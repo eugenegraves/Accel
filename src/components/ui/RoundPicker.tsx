@@ -24,10 +24,10 @@ export function RoundPicker({ value, onChange, disabled = false }: RoundPickerPr
           disabled={disabled}
           onClick={() => onChange(round.value)}
           className={`
-            flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors
+            flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-150 min-h-[44px]
             ${value === round.value
-              ? 'bg-emerald-600 text-white'
-              : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+              ? 'bg-red-600 text-white'
+              : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
             }
             ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           `}

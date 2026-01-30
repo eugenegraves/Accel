@@ -48,19 +48,19 @@ export function CreateTemplateModal({
     >
       <div className="space-y-4">
         <div>
-          <label className="block text-sm text-slate-400 mb-1">Template Name</label>
+          <label className="block text-sm text-zinc-400 mb-1">Template Name</label>
           <input
             type="text"
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder="e.g., Speed Day, Heavy Squats"
-            className="w-full bg-slate-700 text-slate-100 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full bg-zinc-800 text-zinc-100 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-red-500"
             autoFocus
           />
         </div>
 
         <div>
-          <label className="block text-sm text-slate-400 mb-1">
+          <label className="block text-sm text-zinc-400 mb-1">
             Description (optional)
           </label>
           <textarea
@@ -68,7 +68,7 @@ export function CreateTemplateModal({
             onChange={e => setDescription(e.target.value)}
             placeholder="Add notes about this template..."
             rows={2}
-            className="w-full bg-slate-700 text-slate-100 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+            className="w-full bg-zinc-800 text-zinc-100 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-red-500 resize-none"
           />
         </div>
 

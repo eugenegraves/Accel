@@ -78,16 +78,16 @@ export function ExercisePicker({
         onClick={() => !disabled && setIsOpen(true)}
         disabled={disabled}
         className={`
-          w-full px-4 py-3 text-left bg-slate-800 border border-slate-700 rounded-lg
-          flex items-center justify-between
-          ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-slate-600'}
+          w-full px-4 py-3 text-left bg-zinc-900 border border-zinc-700 rounded-lg
+          flex items-center justify-between min-h-[44px]
+          ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-zinc-600'}
         `}
       >
-        <span className={value ? 'text-slate-100' : 'text-slate-500'}>
+        <span className={value ? 'text-zinc-100' : 'text-zinc-500'}>
           {value || 'Select exercise...'}
         </span>
         <svg
-          className="w-5 h-5 text-slate-400"
+          className="w-5 h-5 text-zinc-400"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -109,16 +109,16 @@ export function ExercisePicker({
           />
 
           {/* Dropdown content */}
-          <div className="absolute z-50 mt-1 w-full bg-slate-800 border border-slate-700 rounded-lg shadow-xl max-h-80 overflow-hidden">
+          <div className="absolute z-50 mt-1 w-full bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl max-h-80 overflow-hidden">
             {/* Search input */}
-            <div className="p-2 border-b border-slate-700">
+            <div className="p-2 border-b border-zinc-700">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search or type custom..."
                 autoFocus
-                className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-md text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-600 rounded-md text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-red-500"
               />
             </div>
 
@@ -130,14 +130,14 @@ export function ExercisePicker({
                   type="button"
                   onClick={() => handleSelect(exercise)}
                   className={`
-                    w-full px-4 py-2.5 text-left hover:bg-slate-700 transition-colors
-                    ${exercise === value ? 'bg-emerald-900/30 text-emerald-400' : 'text-slate-200'}
+                    w-full px-4 py-2.5 text-left hover:bg-zinc-700 transition-colors duration-150
+                    ${exercise === value ? 'bg-red-900/30 text-red-400' : 'text-zinc-200'}
                     ${favorites.includes(exercise) ? 'font-medium' : ''}
                   `}
                 >
                   {exercise}
                   {favorites.includes(exercise) && (
-                    <span className="ml-2 text-xs text-slate-500">Favorite</span>
+                    <span className="ml-2 text-xs text-zinc-500">Favorite</span>
                   )}
                 </button>
               ))}
@@ -147,14 +147,14 @@ export function ExercisePicker({
                 <button
                   type="button"
                   onClick={handleCustomSubmit}
-                  className="w-full px-4 py-2.5 text-left hover:bg-slate-700 text-emerald-400"
+                  className="w-full px-4 py-2.5 text-left hover:bg-zinc-700 text-red-400"
                 >
                   Add "{searchQuery}"
                 </button>
               )}
 
               {filteredExercises.length === 0 && !searchQuery && (
-                <div className="px-4 py-3 text-slate-500 text-center">
+                <div className="px-4 py-3 text-zinc-500 text-center">
                   No exercises found
                 </div>
               )}
