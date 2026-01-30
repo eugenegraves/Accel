@@ -1,5 +1,7 @@
 import type { SprintRep, FlyInDistance, TimingType, RaceRound } from '../types/models';
 import { FLY_IN_DISTANCES } from '../types/models';
+import type { BackupValidation, AccelBackup } from '../types/backup';
+import { DATABASE_VERSION } from '../constants/version';
 
 // --- Sprint Rep Validation ---
 
@@ -177,4 +179,80 @@ export function parseWindInput(input: string): number | null {
   if (!cleaned) return null;
   const parsed = parseFloat(cleaned);
   return isNaN(parsed) ? null : parsed;
+}
+
+// --- Backup Validation ---
+
+const REQUIRED_DATA_TABLES = [
+  'sprintSessions',
+  'sprintSets',
+  'sprintReps',
+  'liftSessions',
+  'liftSets',
+  'liftReps',
+  'meets',
+  'races',
+  'preferences',
+  'sessionTemplates',
+  'sprintTemplateSets',
+  'sprintTemplateReps',
+  'liftTemplateSets',
+] as const;
+
+export function validateBackup(data: unknown): BackupValidation {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  // Check if data is an object
+  if (!data || typeof data !== 'object') {
+    errors.push('Backup file is not a valid JSON object');
+    return { isValid: false, errors, warnings };
+  }
+
+  const backup = data as Record<string, unknown>;
+
+  // Check required top-level fields
+  if (typeof backup.version !== 'string') {
+    errors.push('Missing or invalid "version" field');
+  }
+
+  if (typeof backup.exportedAt !== 'string') {
+    errors.push('Missing or invalid "exportedAt" field');
+  }
+
+  if (typeof backup.databaseVersion !== 'number') {
+    errors.push('Missing or invalid "databaseVersion" field');
+  } else if (backup.databaseVersion > DATABASE_VERSION) {
+    warnings.push(
+      `Backup from newer database version (${backup.databaseVersion} > ${DATABASE_VERSION}). Some data may not be compatible.`
+    );
+  }
+
+  // Check data object
+  if (!backup.data || typeof backup.data !== 'object') {
+    errors.push('Missing or invalid "data" field');
+    return { isValid: false, errors, warnings };
+  }
+
+  const backupData = backup.data as Record<string, unknown>;
+
+  // Check all required tables exist and are arrays
+  for (const table of REQUIRED_DATA_TABLES) {
+    if (!(table in backupData)) {
+      errors.push(`Missing required table: ${table}`);
+    } else if (!Array.isArray(backupData[table])) {
+      errors.push(`Table "${table}" must be an array`);
+    }
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings,
+  };
+}
+
+export function isValidBackup(data: unknown): data is AccelBackup {
+  const validation = validateBackup(data);
+  return validation.isValid;
 }

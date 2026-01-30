@@ -1,14 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../db/database';
+import { db, exportAllData, importAllData } from '../db/database';
 import { Button } from '../components/ui/Button';
 import type { UserPreferences } from '../types/models';
 import { DEFAULT_PREFERENCES } from '../types/models';
+import { validateBackup } from '../utils/validation';
+import { APP_VERSION } from '../constants/version';
 
 export function SettingsPage() {
   const navigate = useNavigate();
   const [preferences, setPreferences] = useState<UserPreferences>(DEFAULT_PREFERENCES);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [importSuccess, setImportSuccess] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load preferences
   useEffect(() => {
@@ -42,6 +49,97 @@ export function SettingsPage() {
         await db.open();
         await db.initializePreferences();
         navigate('/');
+      }
+    }
+  };
+
+  const handleExport = async () => {
+    setExporting(true);
+    setImportError(null);
+    setImportSuccess(null);
+    try {
+      const backup = await exportAllData();
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const date = new Date().toISOString().split('T')[0];
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `accel-backup-${date}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      setImportError(`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setImporting(true);
+    setImportError(null);
+    setImportSuccess(null);
+
+    try {
+      const text = await file.text();
+      let data: unknown;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error('Invalid JSON file');
+      }
+
+      const validation = validateBackup(data);
+      if (!validation.isValid) {
+        throw new Error(validation.errors.join('; '));
+      }
+
+      if (validation.warnings.length > 0) {
+        const proceed = confirm(`Warning: ${validation.warnings.join(' ')}\n\nDo you want to continue?`);
+        if (!proceed) {
+          setImporting(false);
+          return;
+        }
+      }
+
+      const confirmed = confirm(
+        'This will REPLACE all existing data with the imported backup. This cannot be undone.\n\nAre you sure you want to continue?'
+      );
+      if (!confirmed) {
+        setImporting(false);
+        return;
+      }
+
+      const result = await importAllData(data as Parameters<typeof importAllData>[0]);
+      if (!result.success) {
+        throw new Error(result.error || 'Import failed');
+      }
+
+      const totalRecords =
+        result.counts.sprintSessions +
+        result.counts.liftSessions +
+        result.counts.meets +
+        result.counts.sessionTemplates;
+      setImportSuccess(`Successfully imported ${totalRecords} sessions/meets/templates`);
+
+      // Reload preferences
+      const prefs = await db.initializePreferences();
+      setPreferences(prefs);
+    } catch (error) {
+      setImportError(error instanceof Error ? error.message : 'Unknown error');
+    } finally {
+      setImporting(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
       }
     }
   };
@@ -177,6 +275,45 @@ export function SettingsPage() {
           </div>
         </section>
 
+        {/* Data Management */}
+        <section className="mb-6">
+          <h2 className="text-sm font-medium text-slate-400 mb-3">DATA MANAGEMENT</h2>
+          <div className="space-y-3">
+            <Button
+              variant="secondary"
+              onClick={handleExport}
+              disabled={exporting}
+              fullWidth
+            >
+              {exporting ? 'Exporting...' : 'Export All Data'}
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+            <Button
+              variant="secondary"
+              onClick={handleImportClick}
+              disabled={importing}
+              fullWidth
+            >
+              {importing ? 'Importing...' : 'Import Data'}
+            </Button>
+            {importError && (
+              <p className="text-xs text-red-400 text-center">{importError}</p>
+            )}
+            {importSuccess && (
+              <p className="text-xs text-emerald-400 text-center">{importSuccess}</p>
+            )}
+            <p className="text-xs text-slate-500 text-center">
+              Export your data before clearing or for backup. Import replaces all existing data.
+            </p>
+          </div>
+        </section>
+
         {/* Danger Zone */}
         <section className="mb-6">
           <h2 className="text-sm font-medium text-red-400 mb-3">DANGER ZONE</h2>
@@ -194,7 +331,7 @@ export function SettingsPage() {
 
         {/* Version */}
         <div className="text-center text-slate-600 text-sm py-4">
-          Accel v1.0.0
+          Accel v{APP_VERSION}
         </div>
       </div>
     </div>

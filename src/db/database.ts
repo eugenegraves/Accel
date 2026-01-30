@@ -17,6 +17,8 @@ import type {
   SprintTemplateRep,
   LiftTemplateSet,
 } from '../types/templates';
+import type { AccelBackup, ImportResult } from '../types/backup';
+import { APP_VERSION, DATABASE_VERSION } from '../constants/version';
 
 export class AccelDatabase extends Dexie {
   sprintSessions!: Table<SprintSession>;
@@ -442,4 +444,157 @@ export async function getTemplatesByType(type: 'sprint' | 'lift'): Promise<Sessi
     .equals(type)
     .reverse()
     .sortBy('lastUsedAt');
+}
+
+// --- Data Export/Import ---
+
+export async function exportAllData(): Promise<AccelBackup> {
+  const [
+    sprintSessions,
+    sprintSets,
+    sprintReps,
+    liftSessions,
+    liftSets,
+    liftReps,
+    meets,
+    races,
+    preferences,
+    sessionTemplates,
+    sprintTemplateSets,
+    sprintTemplateReps,
+    liftTemplateSets,
+  ] = await Promise.all([
+    db.sprintSessions.toArray(),
+    db.sprintSets.toArray(),
+    db.sprintReps.toArray(),
+    db.liftSessions.toArray(),
+    db.liftSets.toArray(),
+    db.liftReps.toArray(),
+    db.meets.toArray(),
+    db.races.toArray(),
+    db.preferences.toArray(),
+    db.sessionTemplates.toArray(),
+    db.sprintTemplateSets.toArray(),
+    db.sprintTemplateReps.toArray(),
+    db.liftTemplateSets.toArray(),
+  ]);
+
+  return {
+    version: APP_VERSION,
+    exportedAt: new Date().toISOString(),
+    databaseVersion: DATABASE_VERSION,
+    data: {
+      sprintSessions,
+      sprintSets,
+      sprintReps,
+      liftSessions,
+      liftSets,
+      liftReps,
+      meets,
+      races,
+      preferences,
+      sessionTemplates,
+      sprintTemplateSets,
+      sprintTemplateReps,
+      liftTemplateSets,
+    },
+  };
+}
+
+export async function importAllData(backup: AccelBackup): Promise<ImportResult> {
+  try {
+    await db.transaction(
+      'rw',
+      [
+        db.sprintSessions,
+        db.sprintSets,
+        db.sprintReps,
+        db.liftSessions,
+        db.liftSets,
+        db.liftReps,
+        db.meets,
+        db.races,
+        db.preferences,
+        db.sessionTemplates,
+        db.sprintTemplateSets,
+        db.sprintTemplateReps,
+        db.liftTemplateSets,
+      ],
+      async () => {
+        // Clear all tables
+        await Promise.all([
+          db.sprintSessions.clear(),
+          db.sprintSets.clear(),
+          db.sprintReps.clear(),
+          db.liftSessions.clear(),
+          db.liftSets.clear(),
+          db.liftReps.clear(),
+          db.meets.clear(),
+          db.races.clear(),
+          db.preferences.clear(),
+          db.sessionTemplates.clear(),
+          db.sprintTemplateSets.clear(),
+          db.sprintTemplateReps.clear(),
+          db.liftTemplateSets.clear(),
+        ]);
+
+        // Bulk insert all data
+        const { data } = backup;
+        await Promise.all([
+          data.sprintSessions.length > 0 && db.sprintSessions.bulkAdd(data.sprintSessions),
+          data.sprintSets.length > 0 && db.sprintSets.bulkAdd(data.sprintSets),
+          data.sprintReps.length > 0 && db.sprintReps.bulkAdd(data.sprintReps),
+          data.liftSessions.length > 0 && db.liftSessions.bulkAdd(data.liftSessions),
+          data.liftSets.length > 0 && db.liftSets.bulkAdd(data.liftSets),
+          data.liftReps.length > 0 && db.liftReps.bulkAdd(data.liftReps),
+          data.meets.length > 0 && db.meets.bulkAdd(data.meets),
+          data.races.length > 0 && db.races.bulkAdd(data.races),
+          data.preferences.length > 0 && db.preferences.bulkAdd(data.preferences),
+          data.sessionTemplates.length > 0 && db.sessionTemplates.bulkAdd(data.sessionTemplates),
+          data.sprintTemplateSets.length > 0 && db.sprintTemplateSets.bulkAdd(data.sprintTemplateSets),
+          data.sprintTemplateReps.length > 0 && db.sprintTemplateReps.bulkAdd(data.sprintTemplateReps),
+          data.liftTemplateSets.length > 0 && db.liftTemplateSets.bulkAdd(data.liftTemplateSets),
+        ]);
+      }
+    );
+
+    return {
+      success: true,
+      counts: {
+        sprintSessions: backup.data.sprintSessions.length,
+        sprintSets: backup.data.sprintSets.length,
+        sprintReps: backup.data.sprintReps.length,
+        liftSessions: backup.data.liftSessions.length,
+        liftSets: backup.data.liftSets.length,
+        liftReps: backup.data.liftReps.length,
+        meets: backup.data.meets.length,
+        races: backup.data.races.length,
+        preferences: backup.data.preferences.length,
+        sessionTemplates: backup.data.sessionTemplates.length,
+        sprintTemplateSets: backup.data.sprintTemplateSets.length,
+        sprintTemplateReps: backup.data.sprintTemplateReps.length,
+        liftTemplateSets: backup.data.liftTemplateSets.length,
+      },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      counts: {
+        sprintSessions: 0,
+        sprintSets: 0,
+        sprintReps: 0,
+        liftSessions: 0,
+        liftSets: 0,
+        liftReps: 0,
+        meets: 0,
+        races: 0,
+        preferences: 0,
+        sessionTemplates: 0,
+        sprintTemplateSets: 0,
+        sprintTemplateReps: 0,
+        liftTemplateSets: 0,
+      },
+      error: error instanceof Error ? error.message : 'Unknown error during import',
+    };
+  }
 }
