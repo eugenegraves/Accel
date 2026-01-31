@@ -42,7 +42,7 @@ export function LiftTemplateDetailPage() {
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <header className="bg-zinc-900 border-b border-zinc-800 px-4 py-3 pt-safe-top">
+      <header className="bg-zinc-900 border-b border-zinc-800 px-4 py-3 safe-area-inset-top">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/templates')}
@@ -63,7 +63,7 @@ export function LiftTemplateDetailPage() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 overflow-auto p-4 pb-safe-bottom">
+      <main className="flex-1 overflow-auto p-4 safe-area-inset-bottom">
         {/* Description */}
         {template.template.description && (
           <div className="bg-zinc-900 rounded-lg p-4 mb-4">

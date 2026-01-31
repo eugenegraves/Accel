@@ -22,7 +22,7 @@ export function TemplatesPage() {
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <header className="bg-zinc-900 border-b border-zinc-800 px-4 py-3 pt-safe-top">
+      <header className="bg-zinc-900 border-b border-zinc-800 px-4 py-3 safe-area-inset-top">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
@@ -61,7 +61,7 @@ export function TemplatesPage() {
       </div>
 
       {/* Content */}
-      <main className="flex-1 overflow-auto p-4 pb-safe-bottom">
+      <main className="flex-1 overflow-auto p-4 safe-area-inset-bottom">
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-zinc-400">Loading...</div>
