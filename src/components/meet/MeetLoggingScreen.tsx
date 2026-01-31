@@ -93,7 +93,7 @@ export function MeetLoggingScreen() {
             </svg>
           </button>
 
-          <div className="flex-1 text-center">
+          <div className="flex-1 min-w-0 text-center">
             <h1 className="font-semibold text-zinc-100 truncate">
               {meet.name}
             </h1>
