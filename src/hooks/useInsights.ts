@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
+  db,
   getSprintRepsByDistanceWithDates,
   getLiftSetsByExercise,
   getRacesByDistance,
   getAllDistancesWithReps,
   getAllExercisesWithSets,
   getAllRaceDistances,
+  getWeeklyVolumeSummaries,
 } from '../db/database';
 import type { Insight, InsightFilter } from '../types/insights';
 import { generateId } from '../utils/uuid';
@@ -251,6 +253,124 @@ async function detectMeetInsights(): Promise<Insight[]> {
   return insights;
 }
 
+async function detectVolumeInsights(): Promise<Insight[]> {
+  const insights: Insight[] = [];
+  const now = Date.now();
+
+  // Get weekly volume data
+  const weeklySummaries = await getWeeklyVolumeSummaries(8);
+
+  if (weeklySummaries.length < 2) return insights;
+
+  // Check for volume spike (>20% increase week-over-week)
+  const currentWeek = weeklySummaries[weeklySummaries.length - 1];
+  const previousWeek = weeklySummaries[weeklySummaries.length - 2];
+
+  if (previousWeek.totalVolume > 0) {
+    const changePercent = ((currentWeek.totalVolume - previousWeek.totalVolume) / previousWeek.totalVolume) * 100;
+
+    if (changePercent > 20) {
+      insights.push({
+        id: generateId(),
+        category: 'volume_trend',
+        severity: 'notable',
+        domain: 'sprint',
+        title: 'Volume spike detected',
+        description: `Weekly volume increased by ${changePercent.toFixed(0)}% (${(previousWeek.totalVolume / 1000).toFixed(1)}km → ${(currentWeek.totalVolume / 1000).toFixed(1)}km)`,
+        value: currentWeek.totalVolume,
+        previousValue: previousWeek.totalVolume,
+        detectedAt: now,
+      });
+    } else if (changePercent < -20) {
+      insights.push({
+        id: generateId(),
+        category: 'volume_trend',
+        severity: 'notable',
+        domain: 'sprint',
+        title: 'Volume drop detected',
+        description: `Weekly volume decreased by ${Math.abs(changePercent).toFixed(0)}% (${(previousWeek.totalVolume / 1000).toFixed(1)}km → ${(currentWeek.totalVolume / 1000).toFixed(1)}km)`,
+        value: currentWeek.totalVolume,
+        previousValue: previousWeek.totalVolume,
+        detectedAt: now,
+      });
+    }
+  }
+
+  // Check for volume milestones (total across all weeks)
+  const totalVolume = weeklySummaries.reduce((sum, w) => sum + w.totalVolume, 0);
+  const volumeMilestones = [10000, 25000, 50000, 100000]; // 10km, 25km, 50km, 100km
+
+  for (const milestone of volumeMilestones) {
+    // Calculate volume without current week to see if we just crossed
+    const volumeWithoutCurrent = totalVolume - currentWeek.totalVolume;
+    if (volumeWithoutCurrent < milestone && totalVolume >= milestone) {
+      insights.push({
+        id: generateId(),
+        category: 'milestone',
+        severity: 'info',
+        domain: 'sprint',
+        title: `${milestone / 1000}km total volume!`,
+        description: `You've logged ${(totalVolume / 1000).toFixed(1)}km of sprint/tempo work in the last 8 weeks.`,
+        value: totalVolume,
+        detectedAt: now,
+      });
+    }
+  }
+
+  return insights;
+}
+
+async function detectIntensityInsights(): Promise<Insight[]> {
+  const insights: Insight[] = [];
+  const now = Date.now();
+
+  // Get all reps with intensity
+  const allReps = await db.sprintReps.toArray();
+  const repsWithIntensity = allReps.filter(r => r.intensity !== undefined && r.intensity !== null);
+
+  if (repsWithIntensity.length < 10) return insights;
+
+  // Calculate intensity distribution
+  const intensityBuckets: Record<string, number> = {
+    '75-80': 0,
+    '80-85': 0,
+    '85-90': 0,
+    '90-95': 0,
+    '95-100': 0,
+  };
+
+  for (const rep of repsWithIntensity) {
+    const intensity = rep.intensity!;
+    if (intensity >= 95) intensityBuckets['95-100']++;
+    else if (intensity >= 90) intensityBuckets['90-95']++;
+    else if (intensity >= 85) intensityBuckets['85-90']++;
+    else if (intensity >= 80) intensityBuckets['80-85']++;
+    else intensityBuckets['75-80']++;
+  }
+
+  // Find most common intensity range
+  const totalReps = repsWithIntensity.length;
+  const entries = Object.entries(intensityBuckets);
+  const mostCommon = entries.reduce((a, b) => (b[1] > a[1] ? b : a));
+  const mostCommonPercent = (mostCommon[1] / totalReps) * 100;
+
+  // If >70% of reps are at the same intensity range, flag pattern
+  if (mostCommonPercent > 70) {
+    insights.push({
+      id: generateId(),
+      category: 'intensity_pattern',
+      severity: 'info',
+      domain: 'sprint',
+      title: `Intensity pattern: ${mostCommon[0]}%`,
+      description: `${mostCommonPercent.toFixed(0)}% of your tracked reps are in the ${mostCommon[0]}% intensity range.`,
+      value: mostCommon[1],
+      detectedAt: now,
+    });
+  }
+
+  return insights;
+}
+
 export function useInsights(filter?: InsightFilter) {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [loading, setLoading] = useState(true);
@@ -261,13 +381,15 @@ export function useInsights(filter?: InsightFilter) {
       setLoading(true);
       setError(null);
 
-      const [sprintInsights, liftInsights, meetInsights] = await Promise.all([
+      const [sprintInsights, liftInsights, meetInsights, volumeInsights, intensityInsights] = await Promise.all([
         detectSprintInsights(),
         detectLiftInsights(),
         detectMeetInsights(),
+        detectVolumeInsights(),
+        detectIntensityInsights(),
       ]);
 
-      let allInsights = [...sprintInsights, ...liftInsights, ...meetInsights];
+      let allInsights = [...sprintInsights, ...liftInsights, ...meetInsights, ...volumeInsights, ...intensityInsights];
 
       // Sort by severity (significant > notable > info), then by detection time
       const severityOrder: Record<string, number> = {

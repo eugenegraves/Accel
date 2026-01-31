@@ -9,6 +9,8 @@ import type {
   Meet,
   Race,
   UserPreferences,
+  AuxiliarySession,
+  AuxiliaryEntry,
 } from '../types/models';
 import { DEFAULT_PREFERENCES } from '../types/models';
 import type {
@@ -39,6 +41,10 @@ export class AccelDatabase extends Dexie {
   sprintTemplateSets!: Table<SprintTemplateSet>;
   sprintTemplateReps!: Table<SprintTemplateRep>;
   liftTemplateSets!: Table<LiftTemplateSet>;
+
+  // Auxiliary tables
+  auxiliarySessions!: Table<AuxiliarySession>;
+  auxiliaryEntries!: Table<AuxiliaryEntry>;
 
   constructor() {
     super('AccelDB');
@@ -107,6 +113,43 @@ export class AccelDatabase extends Dexie {
       sprintTemplateSets: 'id, templateId, sequence',
       sprintTemplateReps: 'id, setId, sequence',
       liftTemplateSets: 'id, templateId, sequence',
+    });
+
+    // v4: Add auxiliary tables and workType/intensity to sprint reps
+    this.version(4).stores({
+      // Sprint tables - add workType index
+      sprintSessions: 'id, date, status, createdAt',
+      sprintSets: 'id, sessionId, sequence',
+      sprintReps: 'id, setId, sequence, distance, workType',
+
+      // Lift tables (unchanged)
+      liftSessions: 'id, date, status, createdAt',
+      liftSets: 'id, sessionId, sequence, exercise',
+      liftReps: 'id, setId, sequence',
+
+      // Meet tables (unchanged)
+      meets: 'id, date, status, createdAt',
+      races: 'id, meetId, sequence, distance',
+
+      // Preferences (unchanged)
+      preferences: 'id',
+
+      // Template tables (unchanged)
+      sessionTemplates: 'id, type, name, createdAt, lastUsedAt',
+      sprintTemplateSets: 'id, templateId, sequence',
+      sprintTemplateReps: 'id, setId, sequence',
+      liftTemplateSets: 'id, templateId, sequence',
+
+      // Auxiliary tables (new)
+      auxiliarySessions: 'id, date, status, createdAt',
+      auxiliaryEntries: 'id, sessionId, sessionType, category, createdAt',
+    }).upgrade(async (tx) => {
+      // Set default workType='sprint' for all existing SprintRep records
+      await tx.table('sprintReps').toCollection().modify((rep: SprintRep) => {
+        if (!rep.workType) {
+          rep.workType = 'sprint';
+        }
+      });
     });
   }
 
@@ -446,6 +489,172 @@ export async function getTemplatesByType(type: 'sprint' | 'lift'): Promise<Sessi
     .sortBy('lastUsedAt');
 }
 
+// --- Volume Calculation Helpers ---
+
+export interface SessionVolumeData {
+  sprintVolume: number;   // meters from sprint work
+  tempoVolume: number;    // meters from tempo work
+  totalVolume: number;    // combined total
+}
+
+export async function getSessionVolume(sessionId: string): Promise<SessionVolumeData> {
+  const reps = await getAllSprintRepsForSession(sessionId);
+
+  let sprintVolume = 0;
+  let tempoVolume = 0;
+
+  for (const rep of reps) {
+    if (rep.workType === 'tempo') {
+      tempoVolume += rep.distance;
+    } else {
+      sprintVolume += rep.distance;
+    }
+  }
+
+  return {
+    sprintVolume,
+    tempoVolume,
+    totalVolume: sprintVolume + tempoVolume,
+  };
+}
+
+export interface VolumeDataPoint {
+  date: string;
+  sprintVolume: number;
+  tempoVolume: number;
+  totalVolume: number;
+  timestamp: number;
+}
+
+export async function getVolumeByDateRange(
+  startDate: string,
+  endDate: string
+): Promise<VolumeDataPoint[]> {
+  // Get all sprint sessions in date range
+  const sessions = await db.sprintSessions
+    .where('date')
+    .between(startDate, endDate, true, true)
+    .toArray();
+
+  const volumeByDate = new Map<string, VolumeDataPoint>();
+
+  for (const session of sessions) {
+    const volume = await getSessionVolume(session.id);
+    const existing = volumeByDate.get(session.date);
+
+    if (existing) {
+      existing.sprintVolume += volume.sprintVolume;
+      existing.tempoVolume += volume.tempoVolume;
+      existing.totalVolume += volume.totalVolume;
+    } else {
+      volumeByDate.set(session.date, {
+        date: session.date,
+        sprintVolume: volume.sprintVolume,
+        tempoVolume: volume.tempoVolume,
+        totalVolume: volume.totalVolume,
+        timestamp: session.createdAt,
+      });
+    }
+  }
+
+  return Array.from(volumeByDate.values()).sort((a, b) =>
+    a.date.localeCompare(b.date)
+  );
+}
+
+export interface WeeklyVolumeSummary {
+  weekStart: string;
+  sprintVolume: number;
+  tempoVolume: number;
+  totalVolume: number;
+  sessionCount: number;
+  avgIntensity?: number;
+}
+
+function getWeekStart(dateStr: string): string {
+  const date = new Date(dateStr);
+  const day = date.getDay();
+  const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Monday start
+  const monday = new Date(date.setDate(diff));
+  return monday.toISOString().split('T')[0];
+}
+
+export async function getWeeklyVolumeSummaries(weeks: number): Promise<WeeklyVolumeSummary[]> {
+  const now = new Date();
+  const startDate = new Date(now);
+  startDate.setDate(startDate.getDate() - weeks * 7);
+  const startStr = startDate.toISOString().split('T')[0];
+  const endStr = now.toISOString().split('T')[0];
+
+  const sessions = await db.sprintSessions
+    .where('date')
+    .between(startStr, endStr, true, true)
+    .toArray();
+
+  const weeklyData = new Map<string, WeeklyVolumeSummary>();
+
+  for (const session of sessions) {
+    const weekStart = getWeekStart(session.date);
+    const volume = await getSessionVolume(session.id);
+
+    const existing = weeklyData.get(weekStart);
+    if (existing) {
+      existing.sprintVolume += volume.sprintVolume;
+      existing.tempoVolume += volume.tempoVolume;
+      existing.totalVolume += volume.totalVolume;
+      existing.sessionCount += 1;
+    } else {
+      weeklyData.set(weekStart, {
+        weekStart,
+        sprintVolume: volume.sprintVolume,
+        tempoVolume: volume.tempoVolume,
+        totalVolume: volume.totalVolume,
+        sessionCount: 1,
+      });
+    }
+  }
+
+  return Array.from(weeklyData.values()).sort((a, b) =>
+    a.weekStart.localeCompare(b.weekStart)
+  );
+}
+
+// --- Auxiliary Session Helpers ---
+
+export async function getAuxiliarySessionWithEntries(sessionId: string) {
+  const session = await db.auxiliarySessions.get(sessionId);
+  if (!session) return null;
+
+  const entries = await db.auxiliaryEntries
+    .where('sessionId')
+    .equals(sessionId)
+    .sortBy('sequence');
+
+  return { session, entries };
+}
+
+export async function getAuxiliaryEntriesForSession(
+  sessionId: string,
+  sessionType: 'auxiliary' | 'sprint'
+): Promise<AuxiliaryEntry[]> {
+  return db.auxiliaryEntries
+    .where(['sessionId', 'sessionType'])
+    .equals([sessionId, sessionType])
+    .sortBy('sequence');
+}
+
+export async function getRecentAuxiliarySessions(limit = 10): Promise<AuxiliarySession[]> {
+  return db.auxiliarySessions
+    .orderBy('createdAt')
+    .reverse()
+    .limit(limit)
+    .toArray();
+}
+
+export async function getActiveAuxiliarySession(): Promise<AuxiliarySession | undefined> {
+  return db.auxiliarySessions.where('status').equals('active').first();
+}
+
 // --- Data Export/Import ---
 
 export async function exportAllData(): Promise<AccelBackup> {
@@ -463,6 +672,8 @@ export async function exportAllData(): Promise<AccelBackup> {
     sprintTemplateSets,
     sprintTemplateReps,
     liftTemplateSets,
+    auxiliarySessions,
+    auxiliaryEntries,
   ] = await Promise.all([
     db.sprintSessions.toArray(),
     db.sprintSets.toArray(),
@@ -477,6 +688,8 @@ export async function exportAllData(): Promise<AccelBackup> {
     db.sprintTemplateSets.toArray(),
     db.sprintTemplateReps.toArray(),
     db.liftTemplateSets.toArray(),
+    db.auxiliarySessions.toArray(),
+    db.auxiliaryEntries.toArray(),
   ]);
 
   return {
@@ -497,6 +710,8 @@ export async function exportAllData(): Promise<AccelBackup> {
       sprintTemplateSets,
       sprintTemplateReps,
       liftTemplateSets,
+      auxiliarySessions,
+      auxiliaryEntries,
     },
   };
 }
@@ -519,6 +734,8 @@ export async function importAllData(backup: AccelBackup): Promise<ImportResult> 
         db.sprintTemplateSets,
         db.sprintTemplateReps,
         db.liftTemplateSets,
+        db.auxiliarySessions,
+        db.auxiliaryEntries,
       ],
       async () => {
         // Clear all tables
@@ -536,6 +753,8 @@ export async function importAllData(backup: AccelBackup): Promise<ImportResult> 
           db.sprintTemplateSets.clear(),
           db.sprintTemplateReps.clear(),
           db.liftTemplateSets.clear(),
+          db.auxiliarySessions.clear(),
+          db.auxiliaryEntries.clear(),
         ]);
 
         // Bulk insert all data
@@ -554,6 +773,8 @@ export async function importAllData(backup: AccelBackup): Promise<ImportResult> 
           data.sprintTemplateSets.length > 0 && db.sprintTemplateSets.bulkAdd(data.sprintTemplateSets),
           data.sprintTemplateReps.length > 0 && db.sprintTemplateReps.bulkAdd(data.sprintTemplateReps),
           data.liftTemplateSets.length > 0 && db.liftTemplateSets.bulkAdd(data.liftTemplateSets),
+          data.auxiliarySessions?.length > 0 && db.auxiliarySessions.bulkAdd(data.auxiliarySessions),
+          data.auxiliaryEntries?.length > 0 && db.auxiliaryEntries.bulkAdd(data.auxiliaryEntries),
         ]);
       }
     );
@@ -574,6 +795,8 @@ export async function importAllData(backup: AccelBackup): Promise<ImportResult> 
         sprintTemplateSets: backup.data.sprintTemplateSets.length,
         sprintTemplateReps: backup.data.sprintTemplateReps.length,
         liftTemplateSets: backup.data.liftTemplateSets.length,
+        auxiliarySessions: backup.data.auxiliarySessions?.length ?? 0,
+        auxiliaryEntries: backup.data.auxiliaryEntries?.length ?? 0,
       },
     };
   } catch (error) {
@@ -593,6 +816,8 @@ export async function importAllData(backup: AccelBackup): Promise<ImportResult> 
         sprintTemplateSets: 0,
         sprintTemplateReps: 0,
         liftTemplateSets: 0,
+        auxiliarySessions: 0,
+        auxiliaryEntries: 0,
       },
       error: error instanceof Error ? error.message : 'Unknown error during import',
     };

@@ -135,6 +135,8 @@ export function useSprints(sessionId: string | null) {
       restAfter: input.restAfter ?? DEFAULT_REST_SECONDS,
       isFly: input.isFly,
       flyInDistance: input.isFly ? input.flyInDistance : undefined,
+      intensity: input.intensity,
+      workType: input.workType ?? 'sprint',
       notes: input.notes,
       createdAt: timestamp,
     };

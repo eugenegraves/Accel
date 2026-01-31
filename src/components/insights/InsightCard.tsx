@@ -6,11 +6,13 @@ interface InsightCardProps {
 }
 
 const categoryIcons: Record<string, string> = {
-  stagnation: '\u23F8', // Pause symbol
-  improvement: '\u2191', // Up arrow
-  streak: '\u26A1',      // Lightning
-  pattern: '\u2609',     // Circle
-  milestone: '\u2605',   // Star
+  stagnation: '\u23F8',       // Pause symbol
+  improvement: '\u2191',      // Up arrow
+  streak: '\u26A1',           // Lightning
+  pattern: '\u2609',          // Circle
+  milestone: '\u2605',        // Star
+  volume_trend: '\u2195',     // Up-down arrows
+  intensity_pattern: '\u26A1', // Lightning (intensity)
 };
 
 const categoryColors: Record<string, string> = {
@@ -19,6 +21,8 @@ const categoryColors: Record<string, string> = {
   streak: 'text-purple-400',
   pattern: 'text-blue-400',
   milestone: 'text-yellow-400',
+  volume_trend: 'text-emerald-400',
+  intensity_pattern: 'text-cyan-400',
 };
 
 const domainColors: Record<string, string> = {

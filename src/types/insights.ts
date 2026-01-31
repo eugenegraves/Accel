@@ -59,11 +59,13 @@ export interface MeetDistanceTrend {
 // --- Insights ---
 
 export type InsightCategory =
-  | 'stagnation'    // No improvement in X weeks
-  | 'improvement'   // New PR detected
-  | 'streak'        // Consecutive improvement sessions
-  | 'pattern'       // Training pattern observation
-  | 'milestone';    // Notable achievement
+  | 'stagnation'         // No improvement in X weeks
+  | 'improvement'        // New PR detected
+  | 'streak'             // Consecutive improvement sessions
+  | 'pattern'            // Training pattern observation
+  | 'milestone'          // Notable achievement
+  | 'volume_trend'       // Volume spike or drop
+  | 'intensity_pattern'; // Intensity distribution observation
 
 export type InsightSeverity =
   | 'info'          // Informational
@@ -100,4 +102,29 @@ export interface TrendSummary {
   direction: 'improving' | 'declining' | 'stable';
   percentChange: number;
   dataPoints: number;
+}
+
+// --- Volume Data Types ---
+
+export interface VolumeDataPoint {
+  date: string;           // YYYY-MM-DD
+  sprintVolume: number;   // meters
+  tempoVolume: number;    // meters
+  totalVolume: number;    // meters
+  timestamp: number;
+}
+
+export interface WeeklyVolumeSummary {
+  weekStart: string;      // YYYY-MM-DD (Monday)
+  sprintVolume: number;
+  tempoVolume: number;
+  totalVolume: number;
+  sessionCount: number;
+  avgIntensity?: number;
+}
+
+export interface IntensityDistribution {
+  range: string;          // e.g., "90-95%"
+  count: number;
+  percentage: number;
 }

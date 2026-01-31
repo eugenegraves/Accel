@@ -13,10 +13,12 @@ import {
   LiftReviewPage,
   LiftExerciseReviewPage,
   MeetReviewPage,
+  VolumeReviewPage,
   InsightsPage,
   TemplatesPage,
   SprintTemplateDetailPage,
   LiftTemplateDetailPage,
+  AuxiliaryPage,
 } from './pages';
 
 function App() {
@@ -39,6 +41,10 @@ function App() {
                 <Route path="/review/lifts" element={<LiftReviewPage />} />
                 <Route path="/review/lift/:exercise" element={<LiftExerciseReviewPage />} />
                 <Route path="/review/meets" element={<MeetReviewPage />} />
+                <Route path="/review/volume" element={<VolumeReviewPage />} />
+
+                {/* Auxiliary Route */}
+                <Route path="/auxiliary/:sessionId" element={<AuxiliaryPage />} />
 
                 {/* Insights Route */}
                 <Route path="/insights" element={<InsightsPage />} />

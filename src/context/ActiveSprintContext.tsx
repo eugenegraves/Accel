@@ -1,7 +1,19 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import type { SprintSession, SprintSet, SprintRep, SprintRepInput, TimingType, FlyInDistance } from '../types/models';
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import type {
+  SprintSession,
+  SprintSet,
+  SprintRep,
+  SprintRepInput,
+  TimingType,
+  FlyInDistance,
+  SprintWorkType,
+  AuxiliaryEntry,
+  AuxiliaryEntryInput,
+} from '../types/models';
 import { DEFAULT_REST_SECONDS, DEFAULT_PREFERENCES } from '../types/models';
 import { useSprints } from '../hooks/useSprints';
+import { useSprintAuxiliary } from '../hooks/useAuxiliary';
+import { useSessionVolume } from '../hooks/useVolume';
 
 interface SprintEntryState {
   distance: number;
@@ -10,6 +22,8 @@ interface SprintEntryState {
   isFly: boolean;
   flyInDistance: FlyInDistance;
   restAfter: number;
+  intensity: number | null;     // null = not set
+  workType: SprintWorkType;     // 'sprint' | 'tempo'
 }
 
 interface ActiveSprintContextValue {
@@ -34,6 +48,8 @@ interface ActiveSprintContextValue {
   setIsFly: (isFly: boolean) => void;
   setFlyInDistance: (distance: FlyInDistance) => void;
   setRestAfter: (seconds: number) => void;
+  setIntensity: (intensity: number | null) => void;
+  setWorkType: (workType: SprintWorkType) => void;
   clearEntry: () => void;
 
   // Rest timer state
@@ -41,6 +57,18 @@ interface ActiveSprintContextValue {
   restTimerSeconds: number;
   startRestTimer: (seconds?: number) => void;
   stopRestTimer: () => void;
+
+  // Volume data
+  sessionVolume: {
+    sprintVolume: number;
+    tempoVolume: number;
+    totalVolume: number;
+  };
+
+  // Auxiliary entries
+  auxiliaryEntries: AuxiliaryEntry[];
+  addAuxiliaryEntry: (input: AuxiliaryEntryInput) => Promise<AuxiliaryEntry>;
+  deleteAuxiliaryEntry: (entryId: string) => Promise<void>;
 
   // Actions
   setSessionId: (id: string | null) => void;
@@ -64,6 +92,16 @@ export function ActiveSprintProvider({ children }: { children: ReactNode }) {
   const [sessionId, setSessionId] = useState<string | null>(null);
 
   const sprint = useSprints(sessionId);
+  const auxiliary = useSprintAuxiliary(sessionId);
+  const volumeData = useSessionVolume(sessionId);
+
+  // Reload volume when reps change
+  useEffect(() => {
+    if (sessionId) {
+      volumeData.reload();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sprint.allReps.length, sessionId]);
 
   // Entry state
   const [entryState, setEntryState] = useState<SprintEntryState>({
@@ -73,6 +111,8 @@ export function ActiveSprintProvider({ children }: { children: ReactNode }) {
     isFly: false,
     flyInDistance: 20,
     restAfter: DEFAULT_REST_SECONDS,
+    intensity: null,
+    workType: 'sprint',
   });
 
   // Rest timer state
@@ -104,6 +144,14 @@ export function ActiveSprintProvider({ children }: { children: ReactNode }) {
     setEntryState((prev) => ({ ...prev, restAfter }));
   }, []);
 
+  const setIntensity = useCallback((intensity: number | null) => {
+    setEntryState((prev) => ({ ...prev, intensity }));
+  }, []);
+
+  const setWorkType = useCallback((workType: SprintWorkType) => {
+    setEntryState((prev) => ({ ...prev, workType }));
+  }, []);
+
   const clearEntry = useCallback(() => {
     setEntryState((prev) => ({
       ...prev,
@@ -129,13 +177,20 @@ export function ActiveSprintProvider({ children }: { children: ReactNode }) {
     const setId = getCurrentSetId();
     if (!setId) throw new Error('No set available');
 
+    // Require intensity for tempo runs
+    if (entryState.workType === 'tempo' && entryState.intensity === null) {
+      throw new Error('Intensity is required for tempo runs');
+    }
+
     const input: SprintRepInput = {
       distance: entryState.distance,
       time: parseFloat(entryState.timeInput) || 0,
-      timingType: entryState.timingType, // Use entry state timing type directly (no lock)
+      timingType: entryState.timingType,
       restAfter: entryState.restAfter,
       isFly: entryState.isFly,
       flyInDistance: entryState.isFly ? entryState.flyInDistance : undefined,
+      intensity: entryState.intensity ?? undefined,
+      workType: entryState.workType,
     };
 
     const rep = await sprint.addRep(setId, input);
@@ -176,11 +231,21 @@ export function ActiveSprintProvider({ children }: { children: ReactNode }) {
     setIsFly,
     setFlyInDistance,
     setRestAfter,
+    setIntensity,
+    setWorkType,
     clearEntry,
     restTimerRunning,
     restTimerSeconds,
     startRestTimer,
     stopRestTimer,
+    sessionVolume: {
+      sprintVolume: volumeData.sprintVolume,
+      tempoVolume: volumeData.tempoVolume,
+      totalVolume: volumeData.totalVolume,
+    },
+    auxiliaryEntries: auxiliary.entries,
+    addAuxiliaryEntry: auxiliary.addEntry,
+    deleteAuxiliaryEntry: auxiliary.deleteEntry,
     setSessionId,
     createSession: sprint.createSession,
     addSet: sprint.addSet,

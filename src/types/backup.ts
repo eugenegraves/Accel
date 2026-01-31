@@ -8,6 +8,8 @@ import type {
   Meet,
   Race,
   UserPreferences,
+  AuxiliarySession,
+  AuxiliaryEntry,
 } from './models';
 import type {
   SessionTemplate,
@@ -30,6 +32,8 @@ export interface AccelBackupData {
   sprintTemplateSets: SprintTemplateSet[];
   sprintTemplateReps: SprintTemplateRep[];
   liftTemplateSets: LiftTemplateSet[];
+  auxiliarySessions: AuxiliarySession[];
+  auxiliaryEntries: AuxiliaryEntry[];
 }
 
 export interface AccelBackup {
@@ -55,6 +59,8 @@ export interface ImportResult {
     sprintTemplateSets: number;
     sprintTemplateReps: number;
     liftTemplateSets: number;
+    auxiliarySessions: number;
+    auxiliaryEntries: number;
   };
   error?: string;
 }

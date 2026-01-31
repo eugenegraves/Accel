@@ -10,6 +10,7 @@ export { SprintReviewPage } from './SprintReviewPage';
 export { LiftReviewPage } from './LiftReviewPage';
 export { LiftExerciseReviewPage } from './LiftExerciseReviewPage';
 export { MeetReviewPage } from './MeetReviewPage';
+export { VolumeReviewPage } from './VolumeReviewPage';
 
 // Insights Page
 export { InsightsPage } from './InsightsPage';
@@ -18,3 +19,6 @@ export { InsightsPage } from './InsightsPage';
 export { TemplatesPage } from './TemplatesPage';
 export { SprintTemplateDetailPage } from './SprintTemplateDetailPage';
 export { LiftTemplateDetailPage } from './LiftTemplateDetailPage';
+
+// Auxiliary Page
+export { AuxiliaryPage } from './AuxiliaryPage';

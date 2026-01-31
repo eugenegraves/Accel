@@ -4,13 +4,18 @@ import { useActiveSprint } from '../../context/ActiveSprintContext';
 import { NumPad } from '../ui/NumPad';
 import { DistancePicker } from '../ui/DistancePicker';
 import { TimingTypePicker } from '../ui/TimingTypePicker';
+import { WorkTypePicker } from '../ui/WorkTypePicker';
+import { IntensityPicker } from '../ui/IntensityPicker';
 import { TimeDisplay } from '../ui/TimeDisplay';
 import { RestTimer } from '../ui/RestTimer';
 import { ModeIndicator } from '../ui/ModeIndicator';
 import { Button } from '../ui/Button';
+import { VolumeDisplay } from '../ui/VolumeInput';
 import { SprintRepCard } from './SprintRepCard';
 import { SprintSetDivider } from './SprintSetDivider';
 import { EditSprintRepModal } from './EditSprintRepModal';
+import { NewAuxiliaryEntryModal } from '../auxiliary/NewAuxiliaryEntryModal';
+import { AuxiliaryEntryCard } from '../auxiliary/AuxiliaryEntryCard';
 import { DEFAULT_PREFERENCES, FLY_IN_DISTANCES, type FlyInDistance, type SprintRep } from '../../types/models';
 import { parseTimeInput, formatDate } from '../../utils/time';
 
@@ -28,9 +33,15 @@ export function SprintLoggingScreen() {
     setTimingType,
     setIsFly,
     setFlyInDistance,
+    setIntensity,
+    setWorkType,
     restTimerRunning,
     restTimerSeconds,
     stopRestTimer,
+    sessionVolume,
+    auxiliaryEntries,
+    addAuxiliaryEntry,
+    deleteAuxiliaryEntry,
     addSet,
     addRep,
     updateRep,
@@ -43,8 +54,10 @@ export function SprintLoggingScreen() {
 
   const [submitting, setSubmitting] = useState(false);
   const [editingRep, setEditingRep] = useState<SprintRep | null>(null);
+  const [showAuxiliaryModal, setShowAuxiliaryModal] = useState(false);
 
   const isLive = session?.status === 'active';
+  const isTempo = entryState.workType === 'tempo';
 
   const handleAddRep = useCallback(async () => {
     const time = parseTimeInput(entryState.timeInput);
@@ -165,6 +178,22 @@ export function SprintLoggingScreen() {
               </div>
             )}
 
+            {/* Session volume summary */}
+            {sessionVolume.totalVolume > 0 && (
+              <div className="bg-zinc-800/30 rounded-lg px-3 py-2">
+                <VolumeDisplay
+                  sprintVolume={sessionVolume.sprintVolume}
+                  tempoVolume={sessionVolume.tempoVolume}
+                />
+              </div>
+            )}
+
+            {/* Work type picker (Sprint / Tempo) */}
+            <WorkTypePicker
+              value={entryState.workType}
+              onChange={setWorkType}
+            />
+
             {/* Distance picker */}
             <DistancePicker
               value={entryState.distance}
@@ -178,6 +207,26 @@ export function SprintLoggingScreen() {
               onChange={setTimingType}
               locked={false}
             />
+
+            {/* Intensity picker (required for tempo, optional for sprint) */}
+            {(isTempo || entryState.intensity !== null) && (
+              <IntensityPicker
+                value={entryState.intensity}
+                onChange={setIntensity}
+                required={isTempo}
+              />
+            )}
+
+            {/* Show intensity option for sprints if not already showing */}
+            {!isTempo && entryState.intensity === null && (
+              <button
+                type="button"
+                onClick={() => setIntensity(95)}
+                className="w-full py-2 text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
+              >
+                + Add intensity
+              </button>
+            )}
 
             {/* Time display */}
             <TimeDisplay value={entryState.timeInput} />
@@ -224,6 +273,13 @@ export function SprintLoggingScreen() {
                     ))}
                   </select>
                 )}
+                <button
+                  type="button"
+                  onClick={() => setShowAuxiliaryModal(true)}
+                  className="py-2 px-3 text-sm rounded-lg bg-zinc-800 text-zinc-400 hover:bg-zinc-700 transition-colors duration-150 min-h-[44px]"
+                >
+                  +AUX
+                </button>
               </div>
             </div>
           </div>
@@ -276,6 +332,23 @@ export function SprintLoggingScreen() {
               </div>
             );
           })}
+
+          {/* Auxiliary entries */}
+          {auxiliaryEntries.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-sm font-medium text-zinc-400 mb-3">Auxiliary Work</h3>
+              <div className="space-y-2">
+                {auxiliaryEntries.map((entry) => (
+                  <AuxiliaryEntryCard
+                    key={entry.id}
+                    entry={entry}
+                    onDelete={deleteAuxiliaryEntry}
+                    showActions={isLive}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -286,6 +359,14 @@ export function SprintLoggingScreen() {
         onClose={() => setEditingRep(null)}
         onSave={handleSaveRep}
         onDelete={handleDeleteRep}
+      />
+
+      {/* New Auxiliary Entry Modal */}
+      <NewAuxiliaryEntryModal
+        isOpen={showAuxiliaryModal}
+        onClose={() => setShowAuxiliaryModal(false)}
+        onSave={addAuxiliaryEntry}
+        sessionType="sprint"
       />
     </div>
   );
