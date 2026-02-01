@@ -147,6 +147,16 @@ export function useAuxiliary(sessionId: string | null) {
     setSession((prev) => (prev ? { ...prev, status: 'active' } : null));
   }, [sessionId, session]);
 
+  // Delete session (and all child records)
+  const deleteSession = useCallback(async (): Promise<void> => {
+    if (!sessionId) throw new Error('No session to delete');
+
+    await db.transaction('rw', [db.auxiliarySessions, db.auxiliaryEntries], async () => {
+      await db.auxiliaryEntries.where('sessionId').equals(sessionId).delete();
+      await db.auxiliarySessions.delete(sessionId);
+    });
+  }, [sessionId]);
+
   return {
     session,
     entries,
@@ -158,6 +168,7 @@ export function useAuxiliary(sessionId: string | null) {
     deleteEntry,
     completeSession,
     reopenSession,
+    deleteSession,
     reload: loadSession,
   };
 }

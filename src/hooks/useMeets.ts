@@ -150,6 +150,16 @@ export function useMeets(meetId: string | null) {
     setMeet((prev) => prev ? { ...prev, status: 'active' } : null);
   }, [meetId, meet]);
 
+  // Delete meet (and all child records)
+  const deleteMeet = useCallback(async (): Promise<void> => {
+    if (!meetId) throw new Error('No meet to delete');
+
+    await db.transaction('rw', [db.meets, db.races], async () => {
+      await db.races.where('meetId').equals(meetId).delete();
+      await db.meets.delete(meetId);
+    });
+  }, [meetId]);
+
   // Get best race at a distance
   const getBestRaceAtDistance = useCallback((distance: number): Race | null => {
     const racesAtDistance = races.filter((r) => r.distance === distance);
@@ -168,6 +178,7 @@ export function useMeets(meetId: string | null) {
     deleteRace,
     completeMeet,
     reopenMeet,
+    deleteMeet,
     getBestRaceAtDistance,
     reload: loadMeet,
   };

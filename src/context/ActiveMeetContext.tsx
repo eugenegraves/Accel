@@ -36,6 +36,7 @@ interface ActiveMeetContextValue {
   deleteRace: (raceId: string) => Promise<void>;
   completeMeet: () => Promise<void>;
   reopenMeet: () => Promise<void>;
+  deleteMeet: () => Promise<void>;
 
   // Helpers
   getBestRaceAtDistance: (distance: number) => Race | null;
@@ -126,6 +127,7 @@ export function ActiveMeetProvider({ children }: { children: ReactNode }) {
     deleteRace: meetHook.deleteRace,
     completeMeet: meetHook.completeMeet,
     reopenMeet: meetHook.reopenMeet,
+    deleteMeet: meetHook.deleteMeet,
     getBestRaceAtDistance: meetHook.getBestRaceAtDistance,
   };
 

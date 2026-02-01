@@ -80,6 +80,7 @@ interface ActiveSprintContextValue {
   resetAllReps: () => Promise<void>;
   completeSession: () => Promise<void>;
   reopenSession: () => Promise<void>;
+  deleteSession: () => Promise<void>;
 
   // Helpers
   getBestByDistance: (distance: number) => SprintRep | null;
@@ -255,6 +256,7 @@ export function ActiveSprintProvider({ children }: { children: ReactNode }) {
     resetAllReps: sprint.resetAllReps,
     completeSession: sprint.completeSession,
     reopenSession: sprint.reopenSession,
+    deleteSession: sprint.deleteSession,
     getBestByDistance: sprint.getBestByDistance,
     getCurrentSetId,
   };

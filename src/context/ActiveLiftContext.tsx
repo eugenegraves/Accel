@@ -36,6 +36,7 @@ interface ActiveLiftContextValue {
   deleteSet: (setId: string) => Promise<void>;
   completeSession: () => Promise<void>;
   reopenSession: () => Promise<void>;
+  deleteSession: () => Promise<void>;
 
   // Helpers
   getLastLoadForExercise: (exercise: string) => number | null;
@@ -155,6 +156,7 @@ export function ActiveLiftProvider({ children }: { children: ReactNode }) {
     deleteSet: lift.deleteSet,
     completeSession: lift.completeSession,
     reopenSession: lift.reopenSession,
+    deleteSession: lift.deleteSession,
     getLastLoadForExercise: lift.getLastLoadForExercise,
     getRecentExercises: lift.getRecentExercises,
     getCurrentSetId,

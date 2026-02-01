@@ -249,6 +249,21 @@ export function useSprints(sessionId: string | null) {
     setSession((prev) => prev ? { ...prev, status: 'active' } : null);
   }, [sessionId, session]);
 
+  // Delete session (and all child records)
+  const deleteSession = useCallback(async (): Promise<void> => {
+    if (!sessionId) throw new Error('No session to delete');
+
+    const sessionSets = await db.sprintSets.where('sessionId').equals(sessionId).toArray();
+    const setIds = sessionSets.map(s => s.id);
+
+    await db.transaction('rw', [db.sprintSessions, db.sprintSets, db.sprintReps, db.auxiliaryEntries], async () => {
+      await db.sprintReps.where('setId').anyOf(setIds).delete();
+      await db.sprintSets.where('sessionId').equals(sessionId).delete();
+      await db.auxiliaryEntries.where(['sessionId', 'sessionType']).equals([sessionId, 'sprint']).delete();
+      await db.sprintSessions.delete(sessionId);
+    });
+  }, [sessionId]);
+
   // Get best rep by distance within this session
   const getBestByDistance = useCallback((distance: number): SprintRep | null => {
     const repsAtDistance = allReps.filter((r) => r.distance === distance);
@@ -273,6 +288,7 @@ export function useSprints(sessionId: string | null) {
     resetAllReps,
     completeSession,
     reopenSession,
+    deleteSession,
     getBestByDistance,
     reload: loadSession,
   };

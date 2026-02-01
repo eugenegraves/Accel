@@ -230,6 +230,20 @@ export function useLifts(sessionId: string | null) {
     setSession((prev) => prev ? { ...prev, status: 'active' } : null);
   }, [sessionId, session]);
 
+  // Delete session (and all child records)
+  const deleteSession = useCallback(async (): Promise<void> => {
+    if (!sessionId) throw new Error('No session to delete');
+
+    const sessionSets = await db.liftSets.where('sessionId').equals(sessionId).toArray();
+    const setIds = sessionSets.map(s => s.id);
+
+    await db.transaction('rw', [db.liftSessions, db.liftSets, db.liftReps], async () => {
+      await db.liftReps.where('setId').anyOf(setIds).delete();
+      await db.liftSets.where('sessionId').equals(sessionId).delete();
+      await db.liftSessions.delete(sessionId);
+    });
+  }, [sessionId]);
+
   // Get last used load for an exercise
   const getLastLoadForExercise = useCallback((exercise: string): number | null => {
     const matchingSets = sets.filter((s) => s.exercise === exercise);
@@ -267,6 +281,7 @@ export function useLifts(sessionId: string | null) {
     deleteSet,
     completeSession,
     reopenSession,
+    deleteSession,
     getLastLoadForExercise,
     getRecentExercises,
     reload: loadSession,
