@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { NewSprintModal } from '../components/sprint/NewSprintModal';
 import { NewLiftModal } from '../components/lift/NewLiftModal';
 import { NewMeetModal } from '../components/meet/NewMeetModal';
+import { NewAuxiliarySessionModal } from '../components/auxiliary';
 import { ModeIndicator } from '../components/ui/ModeIndicator';
 import { useSprintSessions } from '../hooks/useSprints';
 import { useLiftSessions } from '../hooks/useLifts';
 import { useMeetsList } from '../hooks/useMeets';
+import { useAuxiliarySessions } from '../hooks/useAuxiliary';
 import { db } from '../db/database';
 import { formatDateShort } from '../utils/time';
 import type { MeetVenue, TimingType } from '../types/models';
@@ -17,10 +19,12 @@ export function HomePage() {
   const { sessions: sprintSessions, loading: sprintsLoading, reload: reloadSprints } = useSprintSessions();
   const { sessions: liftSessions, loading: liftsLoading, reload: reloadLifts } = useLiftSessions();
   const { meets, loading: meetsLoading, reload: reloadMeets } = useMeetsList();
+  const { sessions: auxiliarySessions, loading: auxiliaryLoading, reload: reloadAuxiliary } = useAuxiliarySessions();
 
   const [showNewSprintModal, setShowNewSprintModal] = useState(false);
   const [showNewLiftModal, setShowNewLiftModal] = useState(false);
   const [showNewMeetModal, setShowNewMeetModal] = useState(false);
+  const [showNewAuxiliaryModal, setShowNewAuxiliaryModal] = useState(false);
 
   // Initialize preferences on mount
   useEffect(() => {
@@ -91,9 +95,27 @@ export function HomePage() {
     navigate(`/meet/${id}`);
   };
 
+  const handleCreateAuxiliary = async (title?: string, date?: string) => {
+    const timestamp = Date.now();
+    const id = crypto.randomUUID();
+    const session = {
+      id,
+      date: date || new Date().toISOString().split('T')[0],
+      title,
+      status: 'active' as const,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    };
+
+    await db.auxiliarySessions.add(session);
+    await reloadAuxiliary();
+    navigate(`/auxiliary/${id}`);
+  };
+
   const recentSprints = sprintSessions.slice(0, 5);
   const recentLifts = liftSessions.slice(0, 5);
   const recentMeets = meets.slice(0, 5);
+  const recentAuxiliary = auxiliarySessions.slice(0, 5);
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden">
@@ -116,7 +138,7 @@ export function HomePage() {
       {/* Main content */}
       <div className="flex-1 overflow-y-auto px-4 py-6 safe-area-inset-bottom">
         {/* New Session Buttons */}
-        <div className="grid grid-cols-3 gap-3 mb-8">
+        <div className="grid grid-cols-4 gap-3 mb-8">
           <button
             onClick={() => setShowNewSprintModal(true)}
             className="flex flex-col items-center gap-2 p-4 bg-zinc-900 rounded-xl hover:bg-zinc-800 transition-colors duration-150"
@@ -151,6 +173,18 @@ export function HomePage() {
               </svg>
             </div>
             <span className="text-sm font-medium text-zinc-200">Meet</span>
+          </button>
+
+          <button
+            onClick={() => setShowNewAuxiliaryModal(true)}
+            className="flex flex-col items-center gap-2 p-4 bg-zinc-900 rounded-xl hover:bg-zinc-800 transition-colors duration-150"
+          >
+            <div className="w-12 h-12 rounded-full bg-emerald-600/20 flex items-center justify-center">
+              <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            </div>
+            <span className="text-sm font-medium text-zinc-200">Auxiliary</span>
           </button>
         </div>
 
@@ -270,6 +304,34 @@ export function HomePage() {
             <p className="text-zinc-600 text-sm">No meets yet</p>
           )}
         </section>
+
+        {/* Recent Auxiliary Sessions */}
+        <section className="mb-6">
+          <h2 className="text-sm font-medium text-zinc-400 mb-3">RECENT AUXILIARY</h2>
+          {auxiliaryLoading ? (
+            <p className="text-zinc-600 text-sm">Loading...</p>
+          ) : recentAuxiliary.length > 0 ? (
+            <div className="space-y-2">
+              {recentAuxiliary.map((session) => (
+                <button
+                  key={session.id}
+                  onClick={() => navigate(`/auxiliary/${session.id}`)}
+                  className="w-full flex items-center justify-between p-3 bg-zinc-900 rounded-lg hover:bg-zinc-800 transition-colors duration-150"
+                >
+                  <div className="flex-1 text-left">
+                    <p className="font-medium text-zinc-200">
+                      {session.title || 'Auxiliary Session'}
+                    </p>
+                    <p className="text-sm text-zinc-500">{formatDateShort(session.date)}</p>
+                  </div>
+                  <ModeIndicator status={session.status} compact />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="text-zinc-600 text-sm">No auxiliary sessions yet</p>
+          )}
+        </section>
       </div>
 
       {/* Modals */}
@@ -287,6 +349,11 @@ export function HomePage() {
         isOpen={showNewMeetModal}
         onClose={() => setShowNewMeetModal(false)}
         onSubmit={handleCreateMeet}
+      />
+      <NewAuxiliarySessionModal
+        isOpen={showNewAuxiliaryModal}
+        onClose={() => setShowNewAuxiliaryModal(false)}
+        onSubmit={handleCreateAuxiliary}
       />
     </div>
   );

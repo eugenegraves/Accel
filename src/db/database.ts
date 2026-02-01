@@ -151,6 +151,36 @@ export class AccelDatabase extends Dexie {
         }
       });
     });
+
+    // v5: Add compound index [sessionId+sessionType] to auxiliaryEntries for efficient queries
+    this.version(5).stores({
+      // Sprint tables (unchanged)
+      sprintSessions: 'id, date, status, createdAt',
+      sprintSets: 'id, sessionId, sequence',
+      sprintReps: 'id, setId, sequence, distance, workType',
+
+      // Lift tables (unchanged)
+      liftSessions: 'id, date, status, createdAt',
+      liftSets: 'id, sessionId, sequence, exercise',
+      liftReps: 'id, setId, sequence',
+
+      // Meet tables (unchanged)
+      meets: 'id, date, status, createdAt',
+      races: 'id, meetId, sequence, distance',
+
+      // Preferences (unchanged)
+      preferences: 'id',
+
+      // Template tables (unchanged)
+      sessionTemplates: 'id, type, name, createdAt, lastUsedAt',
+      sprintTemplateSets: 'id, templateId, sequence',
+      sprintTemplateReps: 'id, setId, sequence',
+      liftTemplateSets: 'id, templateId, sequence',
+
+      // Auxiliary tables - add compound index
+      auxiliarySessions: 'id, date, status, createdAt',
+      auxiliaryEntries: 'id, sessionId, sessionType, category, createdAt, [sessionId+sessionType]',
+    });
   }
 
   // Initialize default preferences if not exists
