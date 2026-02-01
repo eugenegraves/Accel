@@ -167,10 +167,13 @@ export function useMeets(meetId: string | null) {
     return racesAtDistance.reduce((best, race) => race.time < best.time ? race : best);
   }, [races]);
 
+  // Consider loading if meetId is set but meet doesn't match yet
+  const isLoading = loading || (meetId !== null && meet?.id !== meetId);
+
   return {
     meet,
     races,
-    loading,
+    loading: isLoading,
     error,
     createMeet,
     addRace,

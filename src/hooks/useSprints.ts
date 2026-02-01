@@ -271,12 +271,15 @@ export function useSprints(sessionId: string | null) {
     return repsAtDistance.reduce((best, rep) => rep.time < best.time ? rep : best);
   }, [allReps]);
 
+  // Consider loading if sessionId is set but session doesn't match yet
+  const isLoading = loading || (sessionId !== null && session?.id !== sessionId);
+
   return {
     session,
     sets,
     repsBySet,
     allReps,
-    loading,
+    loading: isLoading,
     error,
     sessionTimingType,
     canChangeTiming,

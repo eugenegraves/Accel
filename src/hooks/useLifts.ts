@@ -266,11 +266,14 @@ export function useLifts(sessionId: string | null) {
     return result;
   }, [sets]);
 
+  // Consider loading if sessionId is set but session doesn't match yet
+  const isLoading = loading || (sessionId !== null && session?.id !== sessionId);
+
   return {
     session,
     sets,
     repsBySet,
-    loading,
+    loading: isLoading,
     error,
     createSession,
     addSet,
