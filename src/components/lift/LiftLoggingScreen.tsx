@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useActiveLift } from '../../context/ActiveLiftContext';
 import { NumPad } from '../ui/NumPad';
@@ -39,6 +39,12 @@ export function LiftLoggingScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [editingSet, setEditingSet] = useState<LiftSet | null>(null);
   const [editingRep, setEditingRep] = useState<LiftRep | null>(null);
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMinTimeElapsed(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const isLive = session?.status === 'active';
 
@@ -112,7 +118,7 @@ export function LiftLoggingScreen() {
     await deleteSet(setId);
   }, [deleteSet]);
 
-  if (loading) {
+  if (loading || !minTimeElapsed) {
     return <LoadingScreen message="Loading lift session..." />;
   }
 

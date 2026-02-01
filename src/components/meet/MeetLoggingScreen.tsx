@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useActiveMeet } from '../../context/ActiveMeetContext';
 import { NumPad } from '../ui/NumPad';
@@ -33,6 +33,12 @@ export function MeetLoggingScreen() {
   } = useActiveMeet();
 
   const [submitting, setSubmitting] = useState(false);
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMinTimeElapsed(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const isLive = meet?.status === 'active';
   const isOutdoor = meet?.venue === 'outdoor';
@@ -72,7 +78,7 @@ export function MeetLoggingScreen() {
     }
   }, [deleteMeet, navigate]);
 
-  if (loading) {
+  if (loading || !minTimeElapsed) {
     return <LoadingScreen message="Loading meet..." />;
   }
 

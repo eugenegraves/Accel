@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useActiveSprint } from '../../context/ActiveSprintContext';
 import { NumPad } from '../ui/NumPad';
@@ -57,6 +57,12 @@ export function SprintLoggingScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [editingRep, setEditingRep] = useState<SprintRep | null>(null);
   const [showAuxiliaryModal, setShowAuxiliaryModal] = useState(false);
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMinTimeElapsed(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const isLive = session?.status === 'active';
   const isTempo = entryState.workType === 'tempo';
@@ -120,7 +126,7 @@ export function SprintLoggingScreen() {
     await deleteRep(repId);
   }, [deleteRep]);
 
-  if (loading) {
+  if (loading || !minTimeElapsed) {
     return <LoadingScreen message="Loading sprint session..." />;
   }
 
