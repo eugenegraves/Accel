@@ -23,6 +23,7 @@ export function SprintLoggingScreen() {
   const navigate = useNavigate();
   const {
     session,
+    sessionId,
     sets,
     repsBySet,
     allReps,
@@ -119,7 +120,7 @@ export function SprintLoggingScreen() {
     await deleteRep(repId);
   }, [deleteRep]);
 
-  if (loading) {
+  if (loading || !sessionId) {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="text-zinc-400">Loading...</div>

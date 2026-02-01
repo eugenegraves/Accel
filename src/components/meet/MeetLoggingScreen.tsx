@@ -15,6 +15,7 @@ export function MeetLoggingScreen() {
   const navigate = useNavigate();
   const {
     meet,
+    meetId,
     races,
     loading,
     entryState,
@@ -71,7 +72,7 @@ export function MeetLoggingScreen() {
     }
   }, [deleteMeet, navigate]);
 
-  if (loading) {
+  if (loading || !meetId) {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="text-zinc-400">Loading...</div>
