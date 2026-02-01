@@ -6,7 +6,7 @@ import { MeetLoggingScreen } from '../components/meet/MeetLoggingScreen';
 export function MeetPage() {
   const { meetId } = useParams<{ meetId: string }>();
   const navigate = useNavigate();
-  const { setMeetId, meet, loading } = useActiveMeet();
+  const { setMeetId, meet, loading, meetId: contextMeetId } = useActiveMeet();
 
   useEffect(() => {
     if (meetId) {
@@ -17,10 +17,10 @@ export function MeetPage() {
 
   // Redirect to home if meet not found after loading
   useEffect(() => {
-    if (!loading && !meet && meetId) {
+    if (contextMeetId === meetId && !loading && !meet && meetId) {
       navigate('/');
     }
-  }, [loading, meet, meetId, navigate]);
+  }, [loading, meet, meetId, contextMeetId, navigate]);
 
   return <MeetLoggingScreen />;
 }

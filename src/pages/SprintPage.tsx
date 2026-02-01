@@ -6,7 +6,7 @@ import { SprintLoggingScreen } from '../components/sprint/SprintLoggingScreen';
 export function SprintPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
-  const { setSessionId, session, loading } = useActiveSprint();
+  const { setSessionId, session, loading, sessionId: contextSessionId } = useActiveSprint();
 
   useEffect(() => {
     if (sessionId) {
@@ -17,10 +17,10 @@ export function SprintPage() {
 
   // Redirect to home if session not found after loading
   useEffect(() => {
-    if (!loading && !session && sessionId) {
+    if (contextSessionId === sessionId && !loading && !session && sessionId) {
       navigate('/');
     }
-  }, [loading, session, sessionId, navigate]);
+  }, [loading, session, sessionId, contextSessionId, navigate]);
 
   return <SprintLoggingScreen />;
 }

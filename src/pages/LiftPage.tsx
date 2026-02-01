@@ -6,7 +6,7 @@ import { LiftLoggingScreen } from '../components/lift/LiftLoggingScreen';
 export function LiftPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
-  const { setSessionId, session, loading } = useActiveLift();
+  const { setSessionId, session, loading, sessionId: contextSessionId } = useActiveLift();
 
   useEffect(() => {
     if (sessionId) {
@@ -17,10 +17,10 @@ export function LiftPage() {
 
   // Redirect to home if session not found after loading
   useEffect(() => {
-    if (!loading && !session && sessionId) {
+    if (contextSessionId === sessionId && !loading && !session && sessionId) {
       navigate('/');
     }
-  }, [loading, session, sessionId, navigate]);
+  }, [loading, session, sessionId, contextSessionId, navigate]);
 
   return <LiftLoggingScreen />;
 }
