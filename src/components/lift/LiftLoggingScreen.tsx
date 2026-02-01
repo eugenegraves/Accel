@@ -6,6 +6,7 @@ import { ExercisePicker } from '../ui/ExercisePicker';
 import { VelocityDisplay } from '../ui/TimeDisplay';
 import { ModeIndicator } from '../ui/ModeIndicator';
 import { Button } from '../ui/Button';
+import { LoadingScreen } from '../ui/LoadingScreen';
 import { LiftSetCard } from './LiftSetCard';
 import { EditLiftSetModal } from './EditLiftSetModal';
 import { EditLiftRepModal } from './EditLiftRepModal';
@@ -112,11 +113,7 @@ export function LiftLoggingScreen() {
   }, [deleteSet]);
 
   if (loading) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-zinc-400">Loading...</div>
-      </div>
-    );
+    return <LoadingScreen message="Loading lift session..." />;
   }
 
   if (!session) {

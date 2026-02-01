@@ -7,6 +7,7 @@ import { RoundPicker } from '../ui/RoundPicker';
 import { TimeDisplay } from '../ui/TimeDisplay';
 import { ModeIndicator } from '../ui/ModeIndicator';
 import { Button } from '../ui/Button';
+import { LoadingScreen } from '../ui/LoadingScreen';
 import { RaceCard } from './RaceCard';
 import { DEFAULT_PREFERENCES } from '../../types/models';
 import { parseTimeInput } from '../../utils/time';
@@ -72,11 +73,7 @@ export function MeetLoggingScreen() {
   }, [deleteMeet, navigate]);
 
   if (loading) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-zinc-400">Loading...</div>
-      </div>
-    );
+    return <LoadingScreen message="Loading meet..." />;
   }
 
   if (!meet) {

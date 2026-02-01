@@ -11,6 +11,7 @@ import { RestTimer } from '../ui/RestTimer';
 import { ModeIndicator } from '../ui/ModeIndicator';
 import { Button } from '../ui/Button';
 import { VolumeDisplay } from '../ui/VolumeInput';
+import { LoadingScreen } from '../ui/LoadingScreen';
 import { SprintRepCard } from './SprintRepCard';
 import { SprintSetDivider } from './SprintSetDivider';
 import { EditSprintRepModal } from './EditSprintRepModal';
@@ -120,11 +121,7 @@ export function SprintLoggingScreen() {
   }, [deleteRep]);
 
   if (loading) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-zinc-400">Loading...</div>
-      </div>
-    );
+    return <LoadingScreen message="Loading sprint session..." />;
   }
 
   if (!session) {

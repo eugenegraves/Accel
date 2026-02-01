@@ -8,3 +8,4 @@ export { RoundPicker } from './RoundPicker';
 export { TimingTypePicker } from './TimingTypePicker';
 export { TimeDisplay, VelocityDisplay } from './TimeDisplay';
 export { Modal } from './Modal';
+export { LoadingScreen } from './LoadingScreen';
