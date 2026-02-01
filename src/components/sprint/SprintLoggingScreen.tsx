@@ -60,7 +60,7 @@ export function SprintLoggingScreen() {
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setMinTimeElapsed(true), 1500);
+    const timer = setTimeout(() => setMinTimeElapsed(true), 5000);
     return () => clearTimeout(timer);
   }, []);
 
