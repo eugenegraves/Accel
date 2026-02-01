@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useActiveSprint } from '../context/ActiveSprintContext';
 import { SprintLoggingScreen } from '../components/sprint/SprintLoggingScreen';
@@ -8,7 +8,7 @@ export function SprintPage() {
   const navigate = useNavigate();
   const { setSessionId, session, loading, sessionId: contextSessionId } = useActiveSprint();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (sessionId) {
       setSessionId(sessionId);
     }

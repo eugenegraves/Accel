@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useActiveMeet } from '../context/ActiveMeetContext';
 import { MeetLoggingScreen } from '../components/meet/MeetLoggingScreen';
@@ -8,7 +8,7 @@ export function MeetPage() {
   const navigate = useNavigate();
   const { setMeetId, meet, loading, meetId: contextMeetId } = useActiveMeet();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (meetId) {
       setMeetId(meetId);
     }

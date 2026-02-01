@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useActiveLift } from '../context/ActiveLiftContext';
 import { LiftLoggingScreen } from '../components/lift/LiftLoggingScreen';
@@ -8,7 +8,7 @@ export function LiftPage() {
   const navigate = useNavigate();
   const { setSessionId, session, loading, sessionId: contextSessionId } = useActiveLift();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (sessionId) {
       setSessionId(sessionId);
     }
